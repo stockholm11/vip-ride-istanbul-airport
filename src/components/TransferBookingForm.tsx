@@ -1,0 +1,429 @@
+import { useState, useEffect, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Dialog, Transition } from '@headlessui/react';
+import {
+  MapPinIcon,
+  CalendarIcon,
+  ClockIcon,
+  UsersIcon,
+  BriefcaseIcon
+} from '@heroicons/react/24/outline';
+import { TransferType } from '../data/vehicles';
+
+interface TransferBookingFormProps {
+  onSearch: (formData: TransferFormData) => void;
+  initialTransferType?: TransferType;
+}
+
+export interface TransferFormData {
+  transferType: TransferType;
+  fromLocation: string;
+  toLocation: string;
+  date: string;
+  time: string;
+  passengers: number;
+  luggage: number;
+  roundTrip: boolean;
+  returnDate?: string;
+  returnTime?: string;
+  direction?: 'fromAirport' | 'toDestination'; // Added direction property
+}
+
+interface LocationOption {
+  id: string;
+  name: string;
+}
+
+const AIRPORTS: LocationOption[] = [
+  { id: 'ist', name: 'Istanbul Airport (IST)' },
+  { id: 'saw', name: 'Sabiha Gökçen Airport (SAW)' },
+];
+
+const POPULAR_DESTINATIONS: LocationOption[] = [
+  { id: 'adalar', name: 'Adalar' },
+  { id: 'arnavutkoy', name: 'Arnavutköy' },
+  { id: 'atasehir', name: 'Ataşehir' },
+  { id: 'avcilar', name: 'Avcılar' },
+  { id: 'bagcilar', name: 'Bağcılar' },
+  { id: 'bahcelievler', name: 'Bahçelievler' },
+  { id: 'bakirkoy', name: 'Bakırköy' },
+  { id: 'basaksehir', name: 'Başakşehir' },
+  { id: 'bayrampasa', name: 'Bayrampaşa' },
+  { id: 'besiktas', name: 'Beşiktaş' },
+  { id: 'beykoz', name: 'Beykoz' },
+  { id: 'beylikduzu', name: 'Beylikdüzü' },
+  { id: 'beyoglu', name: 'Beyoğlu' },
+  { id: 'buyukcekmece', name: 'Büyükçekmece' },
+  { id: 'catalca', name: 'Çatalca' },
+  { id: 'cekmekoy', name: 'Çekmeköy' },
+  { id: 'esenler', name: 'Esenler' },
+  { id: 'esenyurt', name: 'Esenyurt' },
+  { id: 'eyupsultan', name: 'Eyüpsultan' },
+  { id: 'fatih', name: 'Fatih' },
+  { id: 'gaziosmanpasa', name: 'Gaziosmanpaşa' },
+  { id: 'gungoren', name: 'Güngören' },
+  { id: 'kadikoy', name: 'Kadıköy' },
+  { id: 'kagithane', name: 'Kağıthane' },
+  { id: 'kartal', name: 'Kartal' },
+  { id: 'kucukcekmece', name: 'Küçükçekmece' },
+  { id: 'maltepe', name: 'Maltepe' },
+  { id: 'pendik', name: 'Pendik' },
+  { id: 'sancaktepe', name: 'Sancaktepe' },
+  { id: 'saryer', name: 'Sarıyer' },
+  { id: 'silivri', name: 'Silivri' },
+  { id: 'sultanbeyli', name: 'Sultanbeyli' },
+  { id: 'sultangazi', name: 'Sultangazi' },
+  { id: 'sile', name: 'Şile' },
+  { id: 'sisli', name: 'Şişli' },
+  { id: 'taksim', name: 'Taksim' },
+  { id: 'tuzla', name: 'Tuzla' },
+  { id: 'umraniye', name: 'Ümraniye' },
+  { id: 'uskudar', name: 'Üsküdar' },
+  { id: 'zeytinburnu', name: 'Zeytinburnu' },
+];
+
+const CITIES: LocationOption[] = [
+  { id: 'istanbul', name: 'Istanbul' },
+  { id: 'ankara', name: 'Ankara' },
+  { id: 'izmir', name: 'Izmir' },
+  { id: 'bursa', name: 'Bursa' },
+  { id: 'antalya', name: 'Antalya' },
+];
+
+export default function TransferBookingForm({ onSearch, initialTransferType = 'airport' }: TransferBookingFormProps) {
+  const { t } = useTranslation();
+  const [formData, setFormData] = useState<TransferFormData>({
+    transferType: initialTransferType,
+    fromLocation: '',
+    toLocation: '',
+    date: '',
+    time: '',
+    passengers: 1,
+    luggage: 1,
+    roundTrip: false,
+    direction: 'fromAirport', // Default direction
+  });
+
+  // Calculate min date (today)
+  const today = new Date().toISOString().split('T')[0];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(formData);
+  };
+
+  // Logic to determine from/to location options based on transfer type
+  const getFromOptions = () => {
+    switch (formData.transferType) {
+      case 'airport':
+        return formData.direction === 'fromAirport' ? AIRPORTS : POPULAR_DESTINATIONS;
+      case 'intercity':
+        return CITIES;
+      case 'city':
+        return POPULAR_DESTINATIONS;
+      default:
+        return [];
+    }
+  };
+
+  const getToOptions = () => {
+    let options: LocationOption[] = [];
+    switch (formData.transferType) {
+      case 'airport':
+        options = POPULAR_DESTINATIONS;
+        break;
+      case 'intercity':
+        options = CITIES;
+        break;
+      case 'city':
+        options = POPULAR_DESTINATIONS;
+        break;
+      default:
+        options = [];
+    }
+    // Filter out the currently selected fromLocation
+    return options.filter(option => option.id !== formData.fromLocation);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h3 className="text-xl font-bold text-primary mb-6">{t('transfer.bookTransfer')}</h3>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Transfer Type */}
+        <div className="grid grid-cols-3 gap-3">
+          <label className={`
+            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
+            ${formData.transferType === 'airport' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+          `}>
+            <input
+              type="radio"
+              name="transferType"
+              value="airport"
+              checked={formData.transferType === 'airport'}
+              onChange={handleChange}
+              className="sr-only"
+            />
+            <span className="text-sm font-medium">{t('nav.airportTransfer')}</span>
+          </label>
+
+          <label className={`
+            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
+            ${formData.transferType === 'intercity' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+          `}>
+            <input
+              type="radio"
+              name="transferType"
+              value="intercity"
+              checked={formData.transferType === 'intercity'}
+              onChange={handleChange}
+              className="sr-only"
+            />
+            <span className="text-sm font-medium">{t('transfer.intercity')}</span>
+          </label>
+
+          <label className={`
+            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
+            ${formData.transferType === 'city' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+          `}>
+            <input
+              type="radio"
+              name="transferType"
+              value="city"
+              checked={formData.transferType === 'city'}
+              onChange={handleChange}
+              className="sr-only"
+            />
+            <span className="text-sm font-medium">{t('transfer.cityTransfer')}</span>
+          </label>
+        </div>
+
+        {/* From and To Locations */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <label htmlFor="fromLocation" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.fromLocation')}
+            </label>
+            <div className="relative">
+              <select
+                id="fromLocation"
+                name="fromLocation"
+                value={formData.fromLocation}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              >
+                <option value="">{t('transfer.selectLocation')}</option>
+                {getFromOptions().map(option => (
+                  <option key={option.id} value={option.id}>{option.name}</option>
+                ))}
+              </select>
+              <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          <div className="relative">
+            <label htmlFor="toLocation" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.toLocation')}
+            </label>
+            <div className="relative">
+              <select
+                id="toLocation"
+                name="toLocation"
+                value={formData.toLocation}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              >
+                <option value="">{t('transfer.selectLocation')}</option>
+                {getToOptions().map(option => (
+                  <option key={option.id} value={option.id}>{option.name}</option>
+                ))}
+              </select>
+              <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Date and Time */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.date')}
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                id="date"
+                name="date"
+                min={today}
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              />
+              <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          <div className="relative">
+            <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.time')}
+            </label>
+            <div className="relative">
+              <select
+                id="time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              >
+                <option value="">{t('booking.selectTime')}</option>
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                    {`${i.toString().padStart(2, '0')}:00`}
+                  </option>
+                ))}
+              </select>
+              <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Return Trip Option */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="roundTrip"
+            name="roundTrip"
+            checked={formData.roundTrip}
+            onChange={handleChange}
+            className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded"
+          />
+          <label htmlFor="roundTrip" className="ml-2 block text-sm text-gray-700">
+            {t('transfer.roundTrip')}
+          </label>
+        </div>
+
+        {/* Return Date and Time (if round trip) */}
+        {formData.roundTrip && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
+              <label htmlFor="returnDate" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('transfer.returnDate')}
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  id="returnDate"
+                  name="returnDate"
+                  min={formData.date || today}
+                  value={formData.returnDate || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                  required={formData.roundTrip}
+                />
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+
+            <div className="relative">
+              <label htmlFor="returnTime" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('transfer.returnTime')}
+              </label>
+              <div className="relative">
+                <select
+                  id="returnTime"
+                  name="returnTime"
+                  value={formData.returnTime || ''}
+                  onChange={handleChange}
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                  required={formData.roundTrip}
+                >
+                  <option value="">{t('booking.selectTime')}</option>
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                      {`${i.toString().padStart(2, '0')}:00`}
+                    </option>
+                  ))}
+                </select>
+                <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Passengers and Luggage */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <label htmlFor="passengers" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.passengers')}
+            </label>
+            <div className="relative">
+              <select
+                id="passengers"
+                name="passengers"
+                value={formData.passengers}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              >
+                {Array.from({ length: 16 }).map((_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+                ))}
+              </select>
+              <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          <div className="relative">
+            <label htmlFor="luggage" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.luggage')}
+            </label>
+            <div className="relative">
+              <select
+                id="luggage"
+                name="luggage"
+                value={formData.luggage}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                required
+              >
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <option key={i} value={i}>{i}</option>
+                ))}
+              </select>
+              <BriefcaseIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="btn btn-secondary btn-md btn-full"
+        >
+          {t('transfer.searchVehicles')}
+        </button>
+      </form>
+    </div>
+  );
+}

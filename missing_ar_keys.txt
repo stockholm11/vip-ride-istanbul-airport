@@ -1,0 +1,43 @@
+featured.popularRoute: Popular
+booking.minimum: Minimum
+booking.maximum: Maximum
+booking.confirmCancel: Are you sure you want to cancel your booking?
+booking.sendingEmail: Sending confirmation email
+booking.emailError: Could not send email. We will contact you soon.
+booking.bookingReference: Booking Reference
+booking.yourBooking: Your Booking
+booking.yourTransfer: Your Transfer
+booking.transferDetails: Transfer Details
+booking.departureDate: Departure Date
+booking.returnDetails: Return Details
+booking.addSpecialRequests: Add any special requests
+booking.howToContact: How can we contact you?
+booking.driverContact: Your driver will contact you shortly before pickup.
+transfer.actualDistance: Actual distance
+transfer.estimatedTravelTime: Estimated travel time
+transfer.fixedPriceNote: Fixed price for this route type
+transfer.priceExplanation: Price calculation
+transfer.priceCalculator: Price Calculator
+transfer.distanceBasedPricing: Distance-based pricing
+transfer.vehicleTypePricing: Vehicle type affects pricing
+transfer.transferTypePricing: Transfer type affects pricing
+transfer.pricingDetails: Pricing Details
+transfer.intraCityInfo: Intra-city transfers: Base rate plus distance
+transfer.intercityInfo: Intercity transfers: Lower per-km rate for longer distances
+transfer.airportInfo: Airport transfers: Same pricing as intra-city transfers
+transfer.mobileBooking: Mobile Booking
+transfer.step1: Step 1: Route
+transfer.step2: Step 2: Date & Time
+transfer.step3: Step 3: Passengers
+transfer.next: Next
+transfer.back: Back
+transfer.quickSelect: Quick Select
+transfer.popularChoices: Popular Choices
+transfer.fromIstanbul: From Istanbul Airport
+transfer.toIstanbul: To Istanbul Airport
+transfer.fromSabiha: From Sabiha Gökçen
+transfer.toSabiha: To Sabiha Gökçen
+transfer.airportToCity: Airport to City
+transfer.cityToAirport: City to Airport
+transfer.simplifiedBooking: Simplified Booking
+transfer.continueToVehicles: Continue to Vehicles
