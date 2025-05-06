@@ -162,8 +162,8 @@
     "bookTransfer": "Book Transfer",
     "istanbulAirport": "Istanbul Airport (IST)",
     "sabihaGokcen": "Sabiha Gökçen Airport (SAW)",
-    "fromLocation": "From Location",
-    "toLocation": "To Location",
+    "fromLocation": "Pickup Location",
+    "toLocation": "Drop-off Location",
     "date": "Date",
     "time": "Time",
     "distance": "Distance",
@@ -171,7 +171,7 @@
     "bookNow": "Book Now",
     "airport": "Airport Transfer",
     "minutes": "min",
-    "passengers": "Passengers",
+    "passengers": "Number of Passengers",
     "luggage": "Luggage",
     "cityTransfer": "City Transfer",
     "estimatedDistance": "Estimated distance",
@@ -235,7 +235,8 @@
     "airportToCity": "Airport to City",
     "cityToAirport": "City to Airport",
     "simplifiedBooking": "Simplified Booking",
-    "continueToVehicles": "Continue to Vehicles"
+    "continueToVehicles": "Continue to Vehicles",
+    "returnTrip": "Return Trip"
   },
   "chauffeur": {
     "title": "Chauffeur-Driven Vehicle Rental",
@@ -429,5 +430,8 @@
     "topkapiPalace": "Topkapi Palace",
     "galata": "Galata Tower",
     "bosphorus": "Bosphorus"
+  },
+  "payment": {
+    "total": "Total Amount"
   }
 }

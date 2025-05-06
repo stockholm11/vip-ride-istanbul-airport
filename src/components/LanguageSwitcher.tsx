@@ -4,11 +4,11 @@ import { GlobeAltIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { isRTL } from "../utils/i18n";
 
-// Language options with codes and emoji flags
+// Language options with codes
 const languageOptions = [
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "tr", name: "Türkçe", flag: "🇹🇷" },
-  { code: "ar", name: "العربية", flag: "🇸🇦" }
+  { code: "en", name: "English" },
+  { code: "tr", name: "Türkçe" },
+  { code: "ar", name: "العربية" }
 ];
 
 interface LanguageSwitcherProps {
@@ -45,7 +45,7 @@ export default function LanguageSwitcher({
         <div className="flex flex-col space-y-2">
           <div className="text-gray-400 font-medium mb-1 flex items-center">
             <GlobeAltIcon className={`w-5 h-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
-            {currentLanguage.name} {currentLanguage.flag}
+            {currentLanguage.name}
           </div>
           <div className="grid grid-cols-3 gap-2 pl-4">
             {languageOptions.map((lang) => (
@@ -58,7 +58,6 @@ export default function LanguageSwitcher({
                     : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                 }`}
               >
-                <span className={rtl ? 'ml-1' : 'mr-1'}>{lang.flag}</span>
                 {lang.name}
               </button>
             ))}
@@ -72,7 +71,6 @@ export default function LanguageSwitcher({
   return (
     <Menu as="div" className={`relative ${className}`}>
       <Menu.Button className="flex items-center text-white hover:text-secondary transition-colors">
-        <span className={rtl ? 'ml-1' : 'mr-1'}>{currentLanguage.flag}</span>
         {variant === "full" ? (
           <span>{currentLanguage.name}</span>
         ) : (
@@ -102,7 +100,6 @@ export default function LanguageSwitcher({
                       i18n.language === lang.code ? 'bg-gray-50 text-secondary' : 'text-gray-700'
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm ${rtl ? 'flex-row-reverse text-right' : 'flex-row text-left'}`}
                   >
-                    <span className={rtl ? 'ml-2' : 'mr-2'}>{lang.flag}</span>
                     {lang.name}
                   </button>
                 )}

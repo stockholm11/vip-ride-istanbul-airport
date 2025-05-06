@@ -173,91 +173,70 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 </div>
 
                 {/* Booking details */}
-                <div className="border border-gray-200 rounded-lg p-4 mb-4">
-                  <h3 className="text-base font-bold text-primary mb-2 pb-1 border-b">
-                    {t("transfer.bookingSummary")}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">
+                    {t("booking.bookingReference")}: {bookingDetails.bookingId}
                   </h3>
-
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.bookingId")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.bookingId}</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-gray-600">{t("booking.name")}:</p>
+                      <p className="font-medium">{bookingDetails.customerName}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.name")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.customerName}</p>
+                    <div>
+                      <p className="text-gray-600">{t("chauffeur.booking.service")}:</p>
+                      <p className="font-medium">{bookingDetails.serviceName || t("chauffeur.title")}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.service")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.serviceName || t("chauffeur.service")}</p>
+                    <div>
+                      <p className="text-gray-600">{t("booking.date")}:</p>
+                      <p className="font-medium">{bookingDetails.date}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.vehicle")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.vehicle.name}</p>
+                    <div>
+                      <p className="text-gray-600">{t("booking.time")}:</p>
+                      <p className="font-medium">{bookingDetails.time}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.date")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{formatDate(bookingDetails.date)}</p>
+                    <div>
+                      <p className="text-gray-600">{t("chauffeur.booking.duration")}:</p>
+                      <p className="font-medium">{bookingDetails.duration} {t("vipTours.hours")}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.time")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.time}</p>
+                    <div>
+                      <p className="text-gray-600">{t("booking.vehicle")}:</p>
+                      <p className="font-medium">{bookingDetails.vehicle.name}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("chauffeur.booking.duration")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>
-                        {bookingDetails.duration} {t("chauffeur.hours")}
-                      </p>
+                    <div>
+                      <p className="text-gray-600">{t("booking.passengers")}:</p>
+                      <p className="font-medium">{bookingDetails.passengers}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("booking.guests")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>
-                        {bookingDetails.passengers} {bookingDetails.passengers === 1 ? t("booking.guest") : t("booking.guests")}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("transfer.fromLocation")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.pickupLocation}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-1">
-                      <p className="text-gray-600 text-sm">{t("transfer.toLocation")}:</p>
-                      <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.dropoffLocation}</p>
-                    </div>
-
-                    {bookingDetails.specialRequests && (
-                      <div className="grid grid-cols-2 gap-1">
-                        <p className="text-gray-600 text-sm">{t("chauffeur.booking.specialRequests")}:</p>
-                        <p className={`font-medium text-gray-800 text-sm ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.specialRequests}</p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-1 pt-2 border-t mt-2">
-                      <p className="text-gray-800 font-bold text-sm">{t("transfer.totalPrice")}:</p>
-                      <p className={`font-bold text-primary text-sm ${rtl ? 'text-right' : 'text-left'}`}>{formatPrice(bookingDetails.totalPrice)}</p>
-                    </div>
-
-                    {/* Payment Method */}
-                    <div className="border-t pt-2 mt-2">
-                      <h3 className="text-base font-semibold mb-1">{t("transfer.paymentMethod")}</h3>
-                      <p className="text-gray-600 text-sm">
-                        {bookingDetails.paymentMethod === 'creditCard' ? t("transfer.creditCard") : t("transfer.cash")}
-                      </p>
+                    <div>
+                      <p className="text-gray-600">{t("payment.total")}:</p>
+                      <p className="font-medium">€{bookingDetails.totalPrice}</p>
                     </div>
                   </div>
                 </div>
 
+                {/* Location details */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("transfer.details")}:</h3>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
+                      <p className="font-medium">{bookingDetails.pickupLocation}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">{t("transfer.toLocation")}:</p>
+                      <p className="font-medium">{bookingDetails.dropoffLocation}</p>
+                    </div>
+                    {bookingDetails.specialRequests && (
+                      <div>
+                        <p className="text-gray-600">{t("booking.specialRequests")}:</p>
+                        <p className="font-medium">{bookingDetails.specialRequests}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Contact information */}
-                <div className="bg-gray-50 p-3 rounded-lg mb-3 text-xs">
-                  <p className="font-medium text-gray-800 mb-1">
+                <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
+                  <p className="font-medium text-gray-800 mb-2">
                     {t("booking.contactInfo")}:
                   </p>
                   <p className="text-gray-600 mb-1">
@@ -269,7 +248,7 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 </div>
 
                 {/* Thank you message */}
-                <div className="text-center text-gray-600 text-xs">
+                <div className="text-center text-gray-600 text-sm">
                   <p>{t("booking.thankYouMessage")}</p>
                 </div>
               </div>

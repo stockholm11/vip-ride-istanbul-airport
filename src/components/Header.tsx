@@ -21,9 +21,19 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <Logo />
-          </Link>
+          <div className="flex items-center gap-8">
+            <Link to="/" className="flex items-center">
+              <Logo />
+            </Link>
+            <a
+              href="https://online.tursab.org.tr/signin/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-secondary transition-colors text-xs hidden md:block"
+            >
+              TURSAB Belge No: 14329
+            </a>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className={`hidden md:flex items-center space-x-8 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>

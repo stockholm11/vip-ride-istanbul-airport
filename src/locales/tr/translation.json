@@ -149,6 +149,14 @@
     "howToContact": "Sizinle nasıl iletişime geçebiliriz?",
     "driverContact": "Sürücünüz, alım öncesinde sizinle kısa süre içinde iletişime geçecektir.",
     "bookingConfirmed": "Rezervasyon onaylandı! Referans numaranız:",
+    "close": "Kapat",
+    "transferService": "Transfer Hizmeti",
+    "passengerCount": "Yolcu Sayısı",
+    "bookingDetails": "Rezervasyon Detayları",
+    "paymentMethod": "Ödeme Yöntemi",
+    "creditCard": "Kredi Kartı",
+    "cash": "Nakit",
+    "confirmBooking": "Rezervasyonu Onayla",
     "close": "Kapat"
   },
   "payment": {
@@ -174,7 +182,7 @@
     "orderSummary": "Sipariş Özeti",
     "subtotal": "Ara Toplam",
     "tax": "Vergi",
-    "total": "Toplam",
+    "total": "Toplam Tutar",
     "securePayment": "Güvenli Ödeme",
     "paymentMethods": "Ödeme Yöntemleri",
     "creditCard": "Kredi Kartı",
@@ -207,7 +215,7 @@
     "bookNow": "Şimdi Ayırt",
     "airport": "Havalimanı Transferi",
     "minutes": "dk",
-    "passengers": "Yolcu",
+    "passengers": "Yolcu Sayısı",
     "luggage": "Bagaj",
     "searchVehicles": "Araçları Ara",
     "cityTransfer": "Şehir İçi Transfer",
@@ -255,7 +263,8 @@
     "airportInfo": "Havalimanı transferleri: Şehir içi transferlerle aynı fiyatlandırma",
     "completeBooking": "Rezervasyonunuzu Tamamlayın",
     "completeYourBooking": "Rezervasyonunuzu tamamlamak için bilgilerinizi giriniz",
-    "reviewAndPay": "Transfer detaylarınızı gözden geçirin ve ödemeye geçin"
+    "reviewAndPay": "Transfer detaylarınızı gözden geçirin ve ödemeye geçin",
+    "returnTrip": "Dönüş Transferi"
   },
   "chauffeur": {
     "title": "Şoförlü Araç Kiralama",

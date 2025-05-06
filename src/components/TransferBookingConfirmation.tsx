@@ -147,7 +147,8 @@ export default function TransferBookingConfirmation({
     totalPrice: grandTotal,
     vehicle: vehicle,
     specialRequests: formData.specialRequests,
-    transferType: transferData.transferType || 'airport'
+    transferType: transferData.transferType || 'airport',
+    paymentMethod: formData.paymentMethod as 'creditCard' | 'cash'
   };
 
   return (

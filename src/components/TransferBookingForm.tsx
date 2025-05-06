@@ -9,6 +9,7 @@ import {
   BriefcaseIcon
 } from '@heroicons/react/24/outline';
 import { TransferType } from '../data/vehicles';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 interface TransferBookingFormProps {
   onSearch: (formData: TransferFormData) => void;
@@ -92,6 +93,7 @@ const CITIES: LocationOption[] = [
 
 export default function TransferBookingForm({ onSearch, initialTransferType = 'airport' }: TransferBookingFormProps) {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [formData, setFormData] = useState<TransferFormData>({
     transferType: initialTransferType,
     fromLocation: '',
@@ -107,7 +109,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
   // Calculate min date (today)
   const today = new Date().toISOString().split('T')[0];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>) => {
     const { name, value, type } = e.target;
 
     if (type === 'checkbox') {
@@ -163,59 +165,53 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-bold text-primary mb-6">{t('transfer.bookTransfer')}</h3>
+    <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+      <h3 className="text-lg font-bold text-primary mb-4">{t("transfer.bookTransfer")}</h3>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Transfer Type */}
-        <div className="grid grid-cols-3 gap-3">
-          <label className={`
-            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
-            ${formData.transferType === 'airport' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
-          `}>
-            <input
-              type="radio"
-              name="transferType"
-              value="airport"
-              checked={formData.transferType === 'airport'}
-              onChange={handleChange}
-              className="sr-only"
-            />
-            <span className="text-sm font-medium">{t('nav.airportTransfer')}</span>
-          </label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Transfer Type Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <button
+            key="airport"
+            type="button"
+            onClick={() => handleChange({ target: { name: 'transferType', value: 'airport' } } as React.ChangeEvent<HTMLButtonElement>)}
+            className={`flex items-center justify-center p-3 rounded-lg border ${
+              formData.transferType === 'airport'
+                ? "border-secondary bg-secondary/10 text-secondary"
+                : "border-gray-200 hover:border-secondary/50"
+            }`}
+          >
+            {t('nav.airportTransfer')}
+          </button>
 
-          <label className={`
-            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
-            ${formData.transferType === 'intercity' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
-          `}>
-            <input
-              type="radio"
-              name="transferType"
-              value="intercity"
-              checked={formData.transferType === 'intercity'}
-              onChange={handleChange}
-              className="sr-only"
-            />
-            <span className="text-sm font-medium">{t('transfer.intercity')}</span>
-          </label>
+          <button
+            key="intercity"
+            type="button"
+            onClick={() => handleChange({ target: { name: 'transferType', value: 'intercity' } } as React.ChangeEvent<HTMLButtonElement>)}
+            className={`flex items-center justify-center p-3 rounded-lg border ${
+              formData.transferType === 'intercity'
+                ? "border-secondary bg-secondary/10 text-secondary"
+                : "border-gray-200 hover:border-secondary/50"
+            }`}
+          >
+            {t('transfer.intercity')}
+          </button>
 
-          <label className={`
-            flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer
-            ${formData.transferType === 'city' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
-          `}>
-            <input
-              type="radio"
-              name="transferType"
-              value="city"
-              checked={formData.transferType === 'city'}
-              onChange={handleChange}
-              className="sr-only"
-            />
-            <span className="text-sm font-medium">{t('transfer.cityTransfer')}</span>
-          </label>
+          <button
+            key="city"
+            type="button"
+            onClick={() => handleChange({ target: { name: 'transferType', value: 'city' } } as React.ChangeEvent<HTMLButtonElement>)}
+            className={`flex items-center justify-center p-3 rounded-lg border ${
+              formData.transferType === 'city'
+                ? "border-secondary bg-secondary/10 text-secondary"
+                : "border-gray-200 hover:border-secondary/50"
+            }`}
+          >
+            {t('transfer.cityTransfer')}
+          </button>
         </div>
 
-        {/* From and To Locations */}
+        {/* Location Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <label htmlFor="fromLocation" className="block text-sm font-medium text-gray-700 mb-1">
@@ -227,7 +223,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                 name="fromLocation"
                 value={formData.fromLocation}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                 required
               >
                 <option value="">{t('transfer.selectLocation')}</option>
@@ -249,7 +245,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                 name="toLocation"
                 value={formData.toLocation}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                 required
               >
                 <option value="">{t('transfer.selectLocation')}</option>
@@ -262,7 +258,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
           </div>
         </div>
 
-        {/* Date and Time */}
+        {/* Date and Time Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
@@ -276,7 +272,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                 min={today}
                 value={formData.date}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                 required
               />
               <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -293,7 +289,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                 required
               >
                 <option value="">{t('booking.selectTime')}</option>
@@ -308,7 +304,52 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
           </div>
         </div>
 
-        {/* Return Trip Option */}
+        {/* Passengers and Luggage */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative">
+            <label htmlFor="passengers" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.passengers')}
+            </label>
+            <div className="relative">
+              <select
+                id="passengers"
+                name="passengers"
+                value={formData.passengers}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
+                required
+              >
+                {Array.from({ length: 16 }).map((_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+                ))}
+              </select>
+              <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+
+          <div className="relative">
+            <label htmlFor="luggage" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('transfer.luggage')}
+            </label>
+            <div className="relative">
+              <select
+                id="luggage"
+                name="luggage"
+                value={formData.luggage}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
+                required
+              >
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <option key={i} value={i}>{i}</option>
+                ))}
+              </select>
+              <BriefcaseIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            </div>
+          </div>
+        </div>
+
+        {/* Round Trip Option */}
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -316,7 +357,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
             name="roundTrip"
             checked={formData.roundTrip}
             onChange={handleChange}
-            className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded"
+            className="h-5 w-5 text-secondary focus:ring-secondary border-gray-300 rounded"
           />
           <label htmlFor="roundTrip" className="ml-2 block text-sm text-gray-700">
             {t('transfer.roundTrip')}
@@ -338,7 +379,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                   min={formData.date || today}
                   value={formData.returnDate || ''}
                   onChange={handleChange}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                   required={formData.roundTrip}
                 />
                 <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -355,7 +396,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
                   name="returnTime"
                   value={formData.returnTime || ''}
                   onChange={handleChange}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2 md:py-3"
                   required={formData.roundTrip}
                 >
                   <option value="">{t('booking.selectTime')}</option>
@@ -371,55 +412,10 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
           </div>
         )}
 
-        {/* Passengers and Luggage */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="relative">
-            <label htmlFor="passengers" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('transfer.passengers')}
-            </label>
-            <div className="relative">
-              <select
-                id="passengers"
-                name="passengers"
-                value={formData.passengers}
-                onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
-                required
-              >
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <option key={i + 1} value={i + 1}>{i + 1}</option>
-                ))}
-              </select>
-              <UsersIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-
-          <div className="relative">
-            <label htmlFor="luggage" className="block text-sm font-medium text-gray-700 mb-1">
-              {t('transfer.luggage')}
-            </label>
-            <div className="relative">
-              <select
-                id="luggage"
-                name="luggage"
-                value={formData.luggage}
-                onChange={handleChange}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10"
-                required
-              >
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <option key={i} value={i}>{i}</option>
-                ))}
-              </select>
-              <BriefcaseIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-        </div>
-
         {/* Submit Button */}
         <button
           type="submit"
-          className="btn btn-secondary btn-md btn-full"
+          className="w-full py-3 bg-secondary text-white font-semibold rounded-md hover:bg-secondary-dark transition-colors"
         >
           {t('transfer.searchVehicles')}
         </button>

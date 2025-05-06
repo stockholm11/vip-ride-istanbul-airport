@@ -5,6 +5,9 @@ import winterBosphorusImg from "../assets/images/tours/winter-bosphorus.jpg";
 import princesIslandsImg from "../assets/images/tours/princes-islands.jpg";
 import dinnerBosphorusCruiseImg from "../assets/images/tours/new/dinner-bosphorus-cruise.jpg";
 import antalyaShoppingImg from "../assets/images/tours/new/antalya-shopping.jpg";
+import shoppingImg from "../assets/images/tours/new/shopping.jpg";
+import byzantineExplorationImg from "../assets/images/tours/new/byzantine-exploration.webp";
+import ottomanHeritageImg from "../assets/images/tours/new/ottoman-heritage.jpg";
 
 // New images
 import historicalPeninsulaNewImg from "../assets/images/tours/new/historical-peninsula-istanbul.jpg";
@@ -12,6 +15,7 @@ import turkishCulinaryJourneyImg from "../assets/images/tours/new/turkish-culina
 import bosphorusCruiseNewImg from "../assets/images/tours/new/bosphorus-cruise.jpg";
 import winterBosphorusNewImg from "../assets/images/tours/new/winter-bosphorus-istanbul.jpg";
 import summerPrincesIslandsImg from "../assets/images/tours/new/summer-princes-islands.jpg";
+import winterBosphorusIstanbulImg from "../assets/images/tours/new/winter-bosphorus-istanbul.jpg";
 
 export interface TourType {
   id: string;
@@ -38,6 +42,8 @@ export interface FeaturedTourType {
   type: string;
   isPopular?: boolean;
   isSeasonal?: boolean;
+  capacity?: number;
+  location?: string;
 }
 
 // Base featured tours data (language-independent properties)
@@ -69,6 +75,15 @@ const featuredToursBase: FeaturedTourType[] = [
     price: 177,
     duration: 8,
     type: "cultural-historical",
+    isPopular: false,
+    isSeasonal: false
+  },
+  {
+    id: "ottoman-heritage",
+    image: ottomanHeritageImg,
+    price: 175,
+    duration: 7,
+    type: "cultural-historical",
     isPopular: true,
     isSeasonal: false
   },
@@ -81,18 +96,10 @@ const featuredToursBase: FeaturedTourType[] = [
     isPopular: true,
     isSeasonal: false
   },
-  {
-    id: "ottoman-heritage",
-    image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1000&auto=format&fit=crop",
-    price: 175,
-    duration: 7,
-    type: "cultural-historical",
-    isPopular: false,
-    isSeasonal: false
-  },
+  
   {
     id: "byzantine-exploration",
-    image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=1000&auto=format&fit=crop",
+    image: byzantineExplorationImg,
     price: 190,
     duration: 6,
     type: "cultural-historical",
@@ -121,12 +128,13 @@ const featuredToursBase: FeaturedTourType[] = [
   },
   {
     id: "istanbul-shopping-entertainment",
-    image: "https://images.unsplash.com/photo-1519677584237-752f8853252e?q=80&w=1000&auto=format&fit=crop",
+    image: shoppingImg,
     price: 199,
     duration: 8,
     type: "shopping-entertainment",
     isPopular: true,
-    isSeasonal: false
+    isSeasonal: false,
+    capacity: 6
   },
   {
     id: "antalya-shopping-entertainment",
@@ -134,8 +142,8 @@ const featuredToursBase: FeaturedTourType[] = [
     price: 199,
     duration: 8,
     type: "shopping-entertainment",
-    isPopular: false,
-    isSeasonal: false
+    location: "Antalya",
+    capacity: 6
   }
 ];
 
@@ -511,7 +519,7 @@ const toursBase: Omit<TourType, 'title' | 'description' | 'includes'>[] = [
   },
   {
     id: "ottoman-heritage",
-    image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1000&auto=format&fit=crop",
+    image: ottomanHeritageImg,
     price: 175,
     duration: 7,
     capacity: 5,
@@ -519,7 +527,7 @@ const toursBase: Omit<TourType, 'title' | 'description' | 'includes'>[] = [
   },
   {
     id: "byzantine-exploration",
-    image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=1000&auto=format&fit=crop",
+    image: byzantineExplorationImg,
     price: 190,
     duration: 6,
     capacity: 4,
@@ -562,20 +570,22 @@ const toursBase: Omit<TourType, 'title' | 'description' | 'includes'>[] = [
   // Shopping & Entertainment Tours
   {
     id: "istanbul-shopping-entertainment",
-    image: "https://images.unsplash.com/photo-1519677584237-752f8853252e?q=80&w=1000&auto=format&fit=crop",
+    image: shoppingImg,
     price: 199,
     duration: 8,
-    capacity: 6,
-    type: "shopping-entertainment"
+    type: "shopping-entertainment",
+    isPopular: true,
+    isSeasonal: false,
+    capacity: 6
   },
   {
     id: "antalya-shopping-entertainment",
     image: antalyaShoppingImg,
     price: 199,
     duration: 8,
-    capacity: 6,
     type: "shopping-entertainment",
-    location: "Antalya"
+    location: "Antalya",
+    capacity: 6
   }
 ];
 

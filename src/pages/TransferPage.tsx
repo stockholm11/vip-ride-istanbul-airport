@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import Hero from "../components/Hero";
 import TransferBookingForm, { TransferFormData } from "../components/TransferBookingForm";
-import MobileBookingForm from "../components/MobileBookingForm";
 import VehicleCard from "../components/VehicleCard";
 import TransferBookingConfirmation from "../components/TransferBookingConfirmation";
 import { getRealDistance, getEstimatedTime } from "../utils/distanceCalculator";
@@ -289,11 +288,7 @@ export default function TransferPage({ initialTransferType }: { initialTransferT
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mx-auto max-w-4xl"
           >
-            {isMobile ? (
-              <MobileBookingForm onSearch={handleSearch} initialTransferType={initialTransferType} />
-            ) : (
-              <TransferBookingForm onSearch={handleSearch} initialTransferType={initialTransferType} />
-            )}
+            <TransferBookingForm onSearch={handleSearch} initialTransferType={initialTransferType} />
           </motion.div>
         </div>
       </section>

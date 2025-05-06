@@ -66,6 +66,22 @@ export default function Footer() {
                 <FaWhatsapp size={20} />
               </a>
             </div>
+            <Link
+              to="/tursab.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-secondary transition-colors mt-4 inline-block"
+            >
+              A Grubu Seyahat Acentası Belgesi
+            </Link>
+            <Link
+              to="/B2.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-secondary transition-colors mt-2 inline-block block"
+            >
+              B2 Yurt içi ve Uluslar Arası Yolcu Taşıma Yetki Belgesi
+            </Link>
           </div>
 
           {/* Column 2: Quick Links */}

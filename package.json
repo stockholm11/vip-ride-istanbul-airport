@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "npm run optimize-images && tsc -b && vite build --outDir dist",
-    "optimize-images": "node scripts/optimize-images.js",
+    "build": "tsc -b && vite build --outDir dist",
     "lint": "eslint src --fix && tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
@@ -16,6 +15,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.5.0",
     "html2canvas": "^1.4.1",
     "i18next": "^24.2.3",
@@ -25,10 +25,12 @@
     "react-i18next": "^15.4.1",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
+    "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@types/jest": "^29.5.14",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@typescript-eslint/eslint-plugin": "^8.20.0",

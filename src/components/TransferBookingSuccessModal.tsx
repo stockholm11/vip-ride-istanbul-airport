@@ -16,26 +16,32 @@ const dialogAnimation = {
   exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
 };
 
+interface TransferBookingDetails {
+  bookingId: string;
+  customerName: string;
+  fromLocation: string;
+  toLocation: string;
+  date: string;
+  time: string;
+  returnDate?: string;
+  returnTime?: string;
+  roundTrip: boolean;
+  passengers: number;
+  luggage: number;
+  vehicle: {
+    name: string;
+    image: string;
+  };
+  totalPrice: number;
+  transferType: string;
+  specialRequests?: string;
+  paymentMethod: 'creditCard' | 'cash';
+}
+
 interface TransferBookingSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
-  bookingDetails: {
-    bookingId: string;
-    customerName: string;
-    fromLocation: string;
-    toLocation: string;
-    date: string;
-    time: string;
-    returnDate?: string;
-    returnTime?: string;
-    roundTrip: boolean;
-    passengers: number;
-    luggage: number;
-    totalPrice: number;
-    vehicle: Vehicle;
-    specialRequests?: string;
-    transferType: string;
-  };
+  bookingDetails: TransferBookingDetails;
 }
 
 export default function TransferBookingSuccessModal({
@@ -98,10 +104,9 @@ export default function TransferBookingSuccessModal({
   const handlePrint = async () => {
     if (!printRef.current) return;
 
-    // Create PDF
     try {
       const canvas = await html2canvas(printRef.current, {
-        scale: 2,
+        scale: 1.5,
         logging: false,
         useCORS: true,
         backgroundColor: "#ffffff"
@@ -117,19 +122,17 @@ export default function TransferBookingSuccessModal({
       const imgWidth = 210;
       const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
+      
+      // İçeriği tek sayfaya sığdırmak için ölçeklendirme yapıyoruz
+      const scale = pageHeight / imgHeight;
+      const scaledImgWidth = imgWidth * scale;
+      const scaledImgHeight = imgHeight * scale;
+      
+      // İçeriği sayfanın ortasına yerleştiriyoruz
+      const xOffset = (210 - scaledImgWidth) / 2;
+      const yOffset = (297 - scaledImgHeight) / 2;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledImgWidth, scaledImgHeight);
       pdf.save(`vip-ride-transfer-${bookingDetails.bookingId}.pdf`);
     } catch (err) {
       console.error('Error generating PDF:', err);
@@ -168,11 +171,11 @@ export default function TransferBookingSuccessModal({
               className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden"
             >
               {/* Printable content section */}
-              <div ref={printRef} className="p-6 bg-white">
+              <div ref={printRef} className="space-y-4 p-4">
                 {/* Logo and header */}
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mb-4">
                   <div className="text-center">
-                    <h1 className="text-2xl font-bold text-primary flex items-center justify-center">
+                    <h1 className="text-xl font-bold text-primary flex items-center justify-center">
                       VIP Ride
                       <span className={`text-sm font-normal text-gray-500 ${rtl ? 'mr-1' : 'ml-1'}`}>
                         {t("general.istanbulAirport")}
@@ -182,108 +185,84 @@ export default function TransferBookingSuccessModal({
                 </div>
 
                 {/* Success message */}
-                <div className="text-center mb-8">
-                  <div className="flex justify-center mb-4">
-                    <CheckCircleIcon className="h-16 w-16 text-green-500" />
+                <div className="text-center mb-4">
+                  <div className="flex justify-center mb-2">
+                    <CheckCircleIcon className="h-12 w-12 text-green-500" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-xl font-bold text-gray-800 mb-1">
                     {t("booking.bookingSuccess")}
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm">
                     {t("booking.confirmationEmail")}
                   </p>
                 </div>
 
                 {/* Booking details */}
-                <div className="border border-gray-200 rounded-lg p-6 mb-6">
-                  <h3 className="text-lg font-bold text-primary mb-4 pb-2 border-b">
-                    {t("transfer.bookingSummary")}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">
+                    {t("booking.bookingReference")}: {bookingDetails.bookingId}
                   </h3>
-
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("booking.bookingId")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.bookingId}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
                       <p className="text-gray-600">{t("booking.name")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.customerName}</p>
+                      <p className="font-medium">{bookingDetails.customerName}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
+                    <div>
                       <p className="text-gray-600">{t("booking.service")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{getServiceName(bookingDetails.transferType)}</p>
+                      <p className="font-medium">{getServiceName(bookingDetails.transferType)}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-gray-600">{t("booking.date")}:</p>
+                      <p className="font-medium">{formatDate(bookingDetails.date)}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">{t("booking.time")}:</p>
+                      <p className="font-medium">{bookingDetails.time}</p>
+                    </div>
+                    <div>
                       <p className="text-gray-600">{t("booking.vehicle")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.vehicle.name}</p>
+                      <p className="font-medium">{bookingDetails.vehicle.name}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.fromLocation}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("transfer.toLocation")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.toLocation}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("transfer.date")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{formatDate(bookingDetails.date)}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("transfer.time")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.time}</p>
-                    </div>
-
-                    {bookingDetails.roundTrip && bookingDetails.returnDate && bookingDetails.returnTime && (
-                      <>
-                        <div className="grid grid-cols-2 gap-2">
-                          <p className="text-gray-600">{t("transfer.returnDate")}:</p>
-                          <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{formatDate(bookingDetails.returnDate)}</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <p className="text-gray-600">{t("transfer.returnTime")}:</p>
-                          <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.returnTime}</p>
-                        </div>
-                      </>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2">
+                    <div>
                       <p className="text-gray-600">{t("transfer.passengers")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>
-                        {bookingDetails.passengers}
-                      </p>
+                      <p className="font-medium">{bookingDetails.passengers}</p>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("transfer.luggage")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>
-                        {bookingDetails.luggage}
-                      </p>
+                    <div>
+                      <p className="text-gray-600">{t("payment.total")}:</p>
+                      <p className="font-medium">{formatPrice(bookingDetails.totalPrice)}</p>
                     </div>
-
-                    {bookingDetails.specialRequests && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("booking.specialRequests")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.specialRequests}</p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2 pt-4 border-t mt-4">
-                      <p className="text-gray-800 font-bold">{t("transfer.totalPrice")}:</p>
-                      <p className={`font-bold text-primary ${rtl ? 'text-right' : 'text-left'}`}>{formatPrice(bookingDetails.totalPrice)}</p>
+                    <div>
+                      <p className="text-gray-600">{t("transfer.paymentMethod")}:</p>
+                      <p className="font-medium">
+                        {bookingDetails.paymentMethod === 'creditCard' ? t("transfer.creditCard") : t("transfer.cash")}
+                      </p>
                     </div>
                   </div>
                 </div>
 
+                {/* Location details */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("transfer.bookingSummary")}:</h3>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
+                      <p className="font-medium">{bookingDetails.fromLocation}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600">{t("transfer.toLocation")}:</p>
+                      <p className="font-medium">{bookingDetails.toLocation}</p>
+                    </div>
+                    {bookingDetails.specialRequests && (
+                      <div>
+                        <p className="text-gray-600">{t("booking.specialRequests")}:</p>
+                        <p className="font-medium">{bookingDetails.specialRequests}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Contact information */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+                <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
                   <p className="font-medium text-gray-800 mb-2">
                     {t("booking.contactInfo")}:
                   </p>
