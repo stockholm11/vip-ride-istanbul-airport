@@ -444,21 +444,6 @@ export default function ChauffeurBookingForm({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className={`
               flex items-center p-3 rounded-lg border-2 cursor-pointer
-              ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
-            `}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="creditCard"
-                checked={formData.paymentMethod === 'creditCard'}
-                onChange={handleChange}
-                className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
-              />
-              <span className="ml-2 text-sm font-medium">{t('transfer.creditCard')}</span>
-            </label>
-
-            <label className={`
-              flex items-center p-3 rounded-lg border-2 cursor-pointer
               ${formData.paymentMethod === 'cash' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
             `}>
               <input
@@ -470,6 +455,22 @@ export default function ChauffeurBookingForm({
                 className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
               />
               <span className="ml-2 text-sm font-medium">{t('transfer.cash')}</span>
+            </label>
+
+            <label className={`
+              flex items-center p-3 rounded-lg border-2 cursor-not-allowed opacity-50
+              ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200'}
+            `}>
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="creditCard"
+                checked={formData.paymentMethod === 'creditCard'}
+                onChange={handleChange}
+                disabled
+                className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 cursor-not-allowed"
+              />
+              <span className="ml-2 text-sm font-medium">{t('transfer.creditCard')}</span>
             </label>
           </div>
         </div>

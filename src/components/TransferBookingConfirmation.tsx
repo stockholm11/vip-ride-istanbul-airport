@@ -398,8 +398,8 @@ export default function TransferBookingConfirmation({
                           </label>
 
                           <label className={`
-                            flex items-center p-3 rounded-lg border-2 cursor-pointer
-                            ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+                            flex items-center p-3 rounded-lg border-2 cursor-not-allowed opacity-50
+                            ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200'}
                           `}>
                             <input
                               type="radio"
@@ -407,7 +407,8 @@ export default function TransferBookingConfirmation({
                               value="creditCard"
                               checked={formData.paymentMethod === 'creditCard'}
                               onChange={handleChange}
-                              className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
+                              disabled
+                              className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 cursor-not-allowed"
                             />
                             <span className="ml-2 text-sm font-medium">{t('transfer.creditCard')}</span>
                           </label>
