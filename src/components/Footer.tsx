@@ -57,7 +57,7 @@ export default function Footer() {
                 <FaInstagram size={20} />
               </a>
               <a
-                href="https://wa.me/908502550789"
+                href="https://wa.me/905431568648"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-secondary transition-colors"
@@ -66,22 +66,22 @@ export default function Footer() {
                 <FaWhatsapp size={20} />
               </a>
             </div>
-            <Link
-              to="/tursab.png"
+            <a
+              href="/vip-ride-istanbul-airport/tursab.png"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-secondary transition-colors mt-4 inline-block"
             >
               A Grubu Seyahat Acentası Belgesi
-            </Link>
-            <Link
-              to="/B2.png"
+            </a>
+            <a
+              href="/vip-ride-istanbul-airport/B2.png"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-secondary transition-colors mt-2 inline-block block"
             >
               B2 Yurt içi ve Uluslar Arası Yolcu Taşıma Yetki Belgesi
-            </Link>
+            </a>
           </div>
 
           {/* Column 2: Quick Links */}
@@ -190,10 +190,10 @@ export default function Footer() {
               <li className="flex items-center">
                 <PhoneIcon className="h-5 w-5 text-secondary mr-3 flex-shrink-0" />
                 <a
-                  href="tel:+908502550789"
+                  href="tel:+905431568648"
                   className="text-gray-300 hover:text-secondary transition-colors"
                 >
-                  +90 850 255 0789
+                  +90 543 156 8648
                 </a>
               </li>
               <li className="flex items-center">

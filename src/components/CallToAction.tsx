@@ -22,10 +22,10 @@ export default function CallToAction() {
           <p className="text-xl mb-8">
             {t("cta.callUs")}{" "}
             <a
-              href="tel:+908502550789"
+              href="tel:+905431568648"
               className="text-secondary font-bold hover:text-secondary-light transition-colors"
             >
-              +90 850 255 0789
+              +90 543 156 8648
             </a>{" "}
             {t("cta.orEmail")}{" "}
             <a
@@ -42,7 +42,7 @@ export default function CallToAction() {
               className="btn-gold px-6 py-4 flex items-center justify-center gap-2"
             >
               <PhoneIcon className="h-5 w-5" />
-              <span>+90 850 255 0789</span>
+              <span>+90 543 156 8648</span>
             </a>
             <Link
               to="/contact"

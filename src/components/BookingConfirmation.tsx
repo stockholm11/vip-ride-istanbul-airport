@@ -250,7 +250,7 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
                     {t("booking.contactInfo")}:
                   </p>
                   <p className="text-gray-600 mb-1">
-                    {t("cta.callUs")}: +90 850 255 0789
+                    {t("cta.callUs")}: +90 543 156 8648
                   </p>
                   <p className="text-gray-600">
                     Email: info@viprideistanbul.com

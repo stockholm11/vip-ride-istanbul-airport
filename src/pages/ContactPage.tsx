@@ -170,7 +170,7 @@ export default function ContactPage() {
                       {t("contact.phone")}
                     </h3>
                     <p className="text-gray-600">
-                      <a href="tel:+908502550789">+90 850 255 0789</a>
+                      <a href="tel:+905431568648">+90 543 156 8648</a>
                     </p>
                   </div>
                 </div>
