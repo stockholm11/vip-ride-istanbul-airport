@@ -36,6 +36,19 @@ interface TransferBookingConfirmationProps {
   } | null;
 }
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  specialRequests: string;
+  paymentMethod: 'cash' | 'creditCard';
+  cardNumber?: string;
+  cardHolderName?: string;
+  expiryDate?: string;
+  cvv?: string;
+}
+
 export default function TransferBookingConfirmation({
   isOpen,
   onClose,
@@ -44,7 +57,7 @@ export default function TransferBookingConfirmation({
   locations
 }: TransferBookingConfirmationProps) {
   const { t, i18n } = useTranslation();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -91,22 +104,118 @@ export default function TransferBookingConfirmation({
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Generate a unique booking reference
-    const reference = generateBookingReference();
-    setBookingReference(reference);
+    try {
+      if (formData.paymentMethod === 'creditCard') {
+        // Validate credit card fields
+        if (!formData.cardNumber || !formData.cardHolderName || !formData.expiryDate || !formData.cvv) {
+          throw new Error(t('payment.pleaseFillAllFields'));
+        }
 
-    // Simulate payment processing
-    setTimeout(async () => {
-      setIsSubmitting(false);
+        // Validate card number format
+        const cardNumber = formData.cardNumber.replace(/\s/g, '');
+        if (!/^\d{16}$/.test(cardNumber)) {
+          throw new Error(t('payment.invalidCardNumber'));
+        }
+
+        // Validate expiry date format
+        if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
+          throw new Error(t('payment.invalidExpiryDate'));
+        }
+
+        // Validate CVV format
+        if (!/^\d{3,4}$/.test(formData.cvv)) {
+          throw new Error(t('payment.invalidCvv'));
+        }
+
+        // Prepare payment data for iyzico
+        const paymentData = {
+          price: grandTotal.toString(),
+          paidPrice: grandTotal.toString(),
+          currency: 'EUR',
+          basketId: `B${Date.now()}`,
+          paymentCard: {
+            cardHolderName: formData.cardHolderName,
+            cardNumber: cardNumber,
+            expireMonth: formData.expiryDate.split('/')[0],
+            expireYear: `20${formData.expiryDate.split('/')[1]}`,
+            cvc: formData.cvv
+          },
+          buyer: {
+            id: `B${Date.now()}`,
+            name: formData.firstName,
+            surname: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            identityNumber: '11111111111',
+            registrationAddress: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
+            city: 'Istanbul',
+            country: 'Turkey',
+            ip: '85.34.78.112'
+          },
+          shippingAddress: {
+            contactName: `${formData.firstName} ${formData.lastName}`,
+            city: 'Istanbul',
+            country: 'Turkey',
+            address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1'
+          },
+          billingAddress: {
+            contactName: `${formData.firstName} ${formData.lastName}`,
+            city: 'Istanbul',
+            country: 'Turkey',
+            address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1'
+          },
+          basketItems: [
+            {
+              id: '1',
+              name: `${locations?.fromName} - ${locations?.toName} Transfer`,
+              category1: 'Transfer',
+              itemType: 'PHYSICAL',
+              price: grandTotal.toString()
+            }
+          ]
+        };
+
+        // Make payment request to backend
+        const response = await fetch('http://localhost:3000/api/payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paymentData),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || t('payment.paymentFailed'));
+        }
+
+        if (result.status !== 'success') {
+          throw new Error(result.errorMessage || t('payment.paymentFailed'));
+        }
+
+        // Log successful payment
+        console.log('Payment successful:', result);
+      }
+
+      // Generate a unique booking reference
+      const reference = generateBookingReference();
+      setBookingReference(reference);
+
+      // Show success state
       setSubmitted(true);
-      setEmailStatus('success'); // Assume email is sent successfully
+      setEmailStatus('success');
 
       // Show the success modal
       setShowSuccessModal(true);
 
-      // Hide the form dialog
-      // Note: We don't completely close it yet, as we want to show the success modal
-    }, 1500);
+    } catch (error) {
+      console.error('Payment error:', error);
+      // Show error message in a more user-friendly way
+      alert(error instanceof Error ? error.message : t('payment.paymentError'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Format price - ensures safe handling of undefined values
@@ -398,8 +507,8 @@ export default function TransferBookingConfirmation({
                           </label>
 
                           <label className={`
-                            flex items-center p-3 rounded-lg border-2 cursor-not-allowed opacity-50
-                            ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200'}
+                            flex items-center p-3 rounded-lg border-2 cursor-pointer
+                            ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
                           `}>
                             <input
                               type="radio"
@@ -407,12 +516,82 @@ export default function TransferBookingConfirmation({
                               value="creditCard"
                               checked={formData.paymentMethod === 'creditCard'}
                               onChange={handleChange}
-                              disabled
-                              className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 cursor-not-allowed"
+                              className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
                             />
                             <span className="ml-2 text-sm font-medium">{t('transfer.creditCard')}</span>
                           </label>
                         </div>
+
+                        {/* Credit Card Form Fields */}
+                        {formData.paymentMethod === 'creditCard' && (
+                          <div className="mt-4 space-y-4">
+                            <div>
+                              <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('payment.cardNumber')} *
+                              </label>
+                              <input
+                                type="text"
+                                id="cardNumber"
+                                name="cardNumber"
+                                value={formData.cardNumber || ''}
+                                onChange={handleChange}
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                                placeholder="1234 5678 9012 3456"
+                                required={formData.paymentMethod === 'creditCard'}
+                              />
+                            </div>
+
+                            <div>
+                              <label htmlFor="cardHolderName" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('payment.cardholderName')} *
+                              </label>
+                              <input
+                                type="text"
+                                id="cardHolderName"
+                                name="cardHolderName"
+                                value={formData.cardHolderName || ''}
+                                onChange={handleChange}
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                                placeholder="JOHN DOE"
+                                required={formData.paymentMethod === 'creditCard'}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">
+                                  {t('payment.expiryDate')} *
+                                </label>
+                                <input
+                                  type="text"
+                                  id="expiryDate"
+                                  name="expiryDate"
+                                  value={formData.expiryDate || ''}
+                                  onChange={handleChange}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                                  placeholder="MM/YY"
+                                  required={formData.paymentMethod === 'creditCard'}
+                                />
+                              </div>
+
+                              <div>
+                                <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">
+                                  {t('payment.cvv')} *
+                                </label>
+                                <input
+                                  type="text"
+                                  id="cvv"
+                                  name="cvv"
+                                  value={formData.cvv || ''}
+                                  onChange={handleChange}
+                                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                                  placeholder="123"
+                                  required={formData.paymentMethod === 'creditCard'}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-600">
