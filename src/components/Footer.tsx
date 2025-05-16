@@ -48,7 +48,7 @@ export default function Footer() {
                 <FaTwitter size={20} />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/viprideistanbul"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-secondary transition-colors"

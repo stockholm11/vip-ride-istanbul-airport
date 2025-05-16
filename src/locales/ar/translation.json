@@ -173,7 +173,8 @@
     "creditCard": "بطاقة ائتمان",
     "cash": "نقداً",
     "confirmBooking": "تأكيد الحجز",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "totalPrice": "السعر الإجمالي"
   },
   "payment": {
     "title": "تفاصيل الدفع",
@@ -373,7 +374,24 @@
       "cancel": "إلغاء",
       "confirmBooking": "تأكيد الحجز",
       "close": "إغلاق",
-      "bookNow": "احجز هذه المركبة"
+      "bookNow": "احجز هذه المركبة",
+      "serviceName": "اسم الخدمة",
+      "date": "التاريخ",
+      "time": "الوقت",
+      "duration": "المدة",
+      "passengers": "الركاب",
+      "pickupLocation": "موقع الاستلام",
+      "dropoffLocation": "موقع التسليم",
+      "totalPrice": "السعر الإجمالي",
+      "paymentMethod": "طريقة الدفع",
+      "details": "تفاصيل الحجز",
+      "paymentDetails": "تفاصيل الدفع",
+      "cardNumber": "رقم البطاقة",
+      "cardholderName": "اسم حامل البطاقة",
+      "totalPrice": "السعر الإجمالي",
+      "contactInfo": "معلومات الاتصال",
+      "callUs": "اتصل بنا",
+      "thankYouMessage": "شكراً لاختيارك VIP Ride Istanbul."
     },
     "serviceTypes": {
       "rental": {

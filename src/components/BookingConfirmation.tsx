@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
@@ -33,7 +33,17 @@ interface BookingConfirmationProps {
 
 export default function BookingConfirmation({ isOpen, onClose, bookingDetails }: BookingConfirmationProps) {
   const { t, i18n } = useTranslation();
+  const [emailStatus, setEmailStatus] = useState<'pending' | 'success' | 'error' | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Reset email status when modal is reopened
+  useEffect(() => {
+    if (isOpen) {
+      setEmailStatus(null);
+      setSubmitted(false);
+    }
+  }, [isOpen]);
 
   // Determine if current language is RTL
   const rtl = isRTL(i18n.language);
@@ -111,15 +121,36 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
     }
   };
 
-  const handleEmailConfirmation = () => {
-    // In a real app, this would trigger a server-side email sending function
-    alert(t("booking.emailSentConfirmation"));
+  const handleEmailConfirmation = async () => {
+    try {
+      setEmailStatus('pending');
+      setSubmitted(true);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setEmailStatus('success');
+      
+      // Show success popup
+      alert(t("booking.emailSentConfirmation"));
+      
+      // Close the form after successful email sending
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setEmailStatus('error');
+    }
   };
 
   return (
     <Dialog
       open={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        // Prevent accidental closing - only allow closing if submitted
+        if (submitted) {
+          onClose();
+        }
+      }}
       className="relative z-50"
     >
       {/* Background overlay */}

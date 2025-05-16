@@ -32,13 +32,18 @@ interface ChauffeurBookingConfirmationProps {
     specialRequests?: string;
     vehicle: Vehicle;
     paymentMethod: 'creditCard' | 'cash';
+    cardNumber?: string;
+    cardHolderName?: string;
+    expiryDate?: string;
+    cvv?: string;
   };
 }
 
 export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingDetails }: ChauffeurBookingConfirmationProps) {
   const { t, i18n } = useTranslation();
   const printRef = useRef<HTMLDivElement>(null);
-  const [emailSent, setEmailSent] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<'pending' | 'success' | 'error' | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   // Determine if current language is RTL
   const rtl = isRTL(i18n.language);
@@ -115,17 +120,30 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
   };
 
   const handleEmailConfirmation = () => {
-    // In a real app, this would trigger a server-side email sending function
-    alert(t("booking.emailSentConfirmation"));
-    onClose(); // Only close after email is sent
+    setEmailStatus('pending');
+    setSubmitted(true);
+    
+    // Simulate email sending
+    setTimeout(() => {
+      setEmailStatus('success');
+      // Show success popup
+      alert(t("booking.emailSentConfirmation"));
+      
+      // Close form after 1 second
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+    }, 1500);
   };
 
   return (
     <Dialog
       open={isOpen}
       onClose={() => {
-        // Prevent accidental closing - do nothing
-        // The user must explicitly click a button to close
+        // Prevent accidental closing - only allow closing if submitted
+        if (submitted) {
+          onClose();
+        }
       }}
       className="relative z-50"
     >
@@ -177,70 +195,97 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                   <h3 className="font-bold text-gray-800 mb-2 text-sm">
                     {t("booking.bookingReference")}: {bookingDetails.bookingId}
                   </h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <p className="text-gray-600">{t("booking.name")}:</p>
-                      <p className="font-medium">{bookingDetails.customerName}</p>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.serviceName")}:</span>
+                      <span className="font-medium">{bookingDetails.serviceName}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("chauffeur.booking.service")}:</p>
-                      <p className="font-medium">{bookingDetails.serviceName || t("chauffeur.title")}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.date")}:</span>
+                      <span className="font-medium">{bookingDetails.date}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("booking.date")}:</p>
-                      <p className="font-medium">{bookingDetails.date}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.time")}:</span>
+                      <span className="font-medium">{bookingDetails.time}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("booking.time")}:</p>
-                      <p className="font-medium">{bookingDetails.time}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.duration")}:</span>
+                      <span className="font-medium">{bookingDetails.duration} {t("chauffeur.hours")}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("chauffeur.booking.duration")}:</p>
-                      <p className="font-medium">{bookingDetails.duration} {t("vipTours.hours")}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.passengers")}:</span>
+                      <span className="font-medium">{bookingDetails.passengers}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("booking.vehicle")}:</p>
-                      <p className="font-medium">{bookingDetails.vehicle.name}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.pickupLocation")}:</span>
+                      <span className="font-medium">{bookingDetails.pickupLocation}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("booking.passengers")}:</p>
-                      <p className="font-medium">{bookingDetails.passengers}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.dropoffLocation")}:</span>
+                      <span className="font-medium">{bookingDetails.dropoffLocation}</span>
                     </div>
-                    <div>
-                      <p className="text-gray-600">{t("payment.total")}:</p>
-                      <p className="font-medium">€{bookingDetails.totalPrice}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</span>
+                      <span className="font-medium">€{bookingDetails.totalPrice}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</span>
+                      <span className="font-medium">{t(`booking.${bookingDetails.paymentMethod}`)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Location details */}
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("transfer.details")}:</h3>
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("chauffeur.booking.details")}:</h3>
                   <div className="space-y-2 text-sm">
-                    <div>
-                      <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
-                      <p className="font-medium">{bookingDetails.pickupLocation}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600">{t("transfer.toLocation")}:</p>
-                      <p className="font-medium">{bookingDetails.dropoffLocation}</p>
-                    </div>
                     {bookingDetails.specialRequests && (
                       <div>
-                        <p className="text-gray-600">{t("booking.specialRequests")}:</p>
+                        <p className="text-gray-600">{t("chauffeur.booking.specialRequests")}:</p>
                         <p className="font-medium">{bookingDetails.specialRequests}</p>
                       </div>
                     )}
                   </div>
                 </div>
 
+                {/* Payment Information */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("chauffeur.booking.paymentDetails")}:</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</span>
+                      <span className="font-medium">
+                        {bookingDetails.paymentMethod === 'creditCard' ? t("chauffeur.booking.creditCard") : t("chauffeur.booking.cash")}
+                      </span>
+                    </div>
+                    {bookingDetails.paymentMethod === 'creditCard' && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t("chauffeur.booking.cardNumber")}:</span>
+                          <span className="font-medium">
+                            {bookingDetails.cardNumber ? `**** **** **** ${bookingDetails.cardNumber.slice(-4)}` : ''}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">{t("chauffeur.booking.cardholderName")}:</span>
+                          <span className="font-medium">{bookingDetails.cardHolderName}</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</span>
+                      <span className="font-medium">€{bookingDetails.totalPrice}</span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Contact information */}
                 <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
                   <p className="font-medium text-gray-800 mb-2">
-                    {t("booking.contactInfo")}:
+                    {t("chauffeur.booking.contactInfo")}:
                   </p>
                   <p className="text-gray-600 mb-1">
-                    {t("cta.callUs")}: +90 543 156 8648
+                    {t("chauffeur.booking.callUs")}: +90 543 156 8648
                   </p>
                   <p className="text-gray-600">
                     Email: info@viprideistanbul.com
@@ -249,7 +294,7 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
 
                 {/* Thank you message */}
                 <div className="text-center text-gray-600 text-sm">
-                  <p>{t("booking.thankYouMessage")}</p>
+                  <p>{t("chauffeur.booking.thankYouMessage")}</p>
                 </div>
               </div>
 
@@ -264,10 +309,11 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 </button>
                 <button
                   onClick={handleEmailConfirmation}
-                  className={`flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
+                  disabled={emailStatus === 'pending'}
+                  className={`flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'} ${emailStatus === 'pending' ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <EnvelopeIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
-                  {t("booking.emailConfirmation")}
+                  {emailStatus === 'pending' ? t("booking.sendingEmail") : t("booking.emailConfirmation")}
                 </button>
               </div>
             </Dialog.Panel>

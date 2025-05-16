@@ -24,6 +24,18 @@ export interface ChauffeurBookingData {
   contactEmail: string;
   contactPhone: string;
   paymentMethod: "cash" | "creditCard";
+  // Billing information
+  firstName: string;
+  lastName: string;
+  billingAddress: string;
+  billingCity: string;
+  billingCountry: string;
+  billingZipCode: string;
+  // Card information
+  cardNumber?: string;
+  cardHolderName?: string;
+  expiryDate?: string;
+  cvv?: string;
 }
 
 export default function ChauffeurBookingForm({
@@ -38,8 +50,8 @@ export default function ChauffeurBookingForm({
   // Initialize form state
   const [formData, setFormData] = useState<ChauffeurBookingData>({
     vehicleId: vehicle.id,
-    pickupDate: today,
-    pickupTime: '10:00',
+    pickupDate: '',
+    pickupTime: '',
     pickupLocation: '',
     dropoffLocation: '',
     duration: 4, // Default duration is 4 hours
@@ -48,7 +60,19 @@ export default function ChauffeurBookingForm({
     contactName: '',
     contactEmail: '',
     contactPhone: '',
-    paymentMethod: 'cash'
+    paymentMethod: 'cash',
+    // Billing information
+    firstName: '',
+    lastName: '',
+    billingAddress: '',
+    billingCity: 'Istanbul',
+    billingCountry: 'Turkey',
+    billingZipCode: '',
+    // Card information
+    cardNumber: '',
+    cardHolderName: '',
+    expiryDate: '',
+    cvv: ''
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -64,30 +88,204 @@ export default function ChauffeurBookingForm({
     return `CHF-${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}`;
   };
 
+  // Helper function to format date for iyzico
+  const formatDateForIyzico = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
+  // Add validation function for date and time
+  const isDateTimeValid = (selectedDate: string, selectedTime: string) => {
+    const now = new Date();
+    const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+    
+    // Add 1 hour buffer to prevent bookings too close to current time
+    const bufferTime = new Date(now.getTime() + 60 * 60 * 1000);
+    
+    return selectedDateTime >= bufferTime;
+  };
+
   // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    
+    // Special handling for date and time validation
+    if (name === 'pickupDate' || name === 'pickupTime') {
+      const newDate = name === 'pickupDate' ? value : formData.pickupDate;
+      const newTime = name === 'pickupTime' ? value : formData.pickupTime;
+      
+      if (newDate && newTime) {
+        if (!isDateTimeValid(newDate, newTime)) {
+          alert(t('booking.invalidDateTime'));
+          return;
+        }
+      }
+    }
+
+    // Kart numarası formatlaması
+    if (name === 'cardNumber') {
+      const formattedValue = value
+        .replace(/\D/g, '') // Sadece sayıları al
+        .replace(/(\d{4})/g, '$1 ') // Her 4 rakamdan sonra boşluk ekle
+        .trim(); // Baştaki ve sondaki boşlukları temizle
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // Son kullanma tarihi formatlaması
+    if (name === 'expiryDate') {
+      const formattedValue = value
+        .replace(/\D/g, '') // Sadece sayıları al
+        .replace(/(\d{2})(\d{0,2})/, '$1/$2') // MM/YY formatı
+        .substring(0, 5); // Maksimum 5 karakter (MM/YY)
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // CVV için sadece sayı girişi
+    if (name === 'cvv') {
+      const formattedValue = value.replace(/\D/g, '').substring(0, 4);
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // Diğer alanlar için normal değişiklik
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Only allow submission if user is on the Review & Confirm step AND confirm button was clicked
     if (currentStep === 3 && confirmClicked) {
-      setFormSubmitted(true);
-      // Generate a booking ID
-      const newBookingId = generateBookingId();
-      setBookingId(newBookingId);
-      onSubmit(formData);
-      // Show the confirmation modal instead of the inline confirmation
-      setShowConfirmation(true);
-      // Reset the flag after submission
-      setConfirmClicked(false);
+      try {
+        if (formData.paymentMethod === 'creditCard') {
+          // Validate credit card fields
+          if (!formData.cardNumber || !formData.cardHolderName || !formData.expiryDate || !formData.cvv) {
+            throw new Error(t('payment.pleaseFillAllFields'));
+          }
+
+          // Validate card number format
+          const cardNumber = formData.cardNumber.replace(/\s/g, '');
+          if (!/^\d{16}$/.test(cardNumber)) {
+            throw new Error(t('payment.invalidCardNumber'));
+          }
+
+          // Validate expiry date format
+          if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
+            throw new Error(t('payment.invalidExpiryDate'));
+          }
+
+          // Validate CVV format
+          if (!/^\d{3,4}$/.test(formData.cvv)) {
+            throw new Error(t('payment.invalidCvv'));
+          }
+
+          // Calculate total price
+          const totalPrice = formData.duration * (hourlyRate || 0);
+
+          // Prepare payment data for iyzico
+          const paymentData = {
+            locale: 'tr',
+            conversationId: `CHF-${Date.now()}`,
+            price: totalPrice.toString(),
+            paidPrice: totalPrice.toString(),
+            currency: 'EUR',
+            installment: '1',
+            basketId: `CHF-${Date.now()}`,
+            paymentChannel: 'WEB',
+            paymentGroup: 'PRODUCT',
+            paymentCard: {
+              cardHolderName: formData.cardHolderName,
+              cardNumber: cardNumber,
+              expireMonth: formData.expiryDate.split('/')[0],
+              expireYear: `20${formData.expiryDate.split('/')[1]}`,
+              cvc: formData.cvv
+            },
+            buyer: {
+              id: `CHF-${Date.now()}`,
+              name: formData.firstName,
+              surname: formData.lastName,
+              gsmNumber: formData.contactPhone,
+              email: formData.contactEmail,
+              identityNumber: '11111111111',
+              lastLoginDate: formatDateForIyzico(new Date()),
+              registrationDate: formatDateForIyzico(new Date()),
+              registrationAddress: formData.billingAddress,
+              ip: '85.34.78.112',
+              city: formData.billingCity,
+              country: formData.billingCountry,
+              zipCode: formData.billingZipCode
+            },
+            shippingAddress: {
+              contactName: `${formData.firstName} ${formData.lastName}`,
+              city: formData.billingCity,
+              country: formData.billingCountry,
+              address: formData.billingAddress,
+              zipCode: formData.billingZipCode
+            },
+            billingAddress: {
+              contactName: `${formData.firstName} ${formData.lastName}`,
+              city: formData.billingCity,
+              country: formData.billingCountry,
+              address: formData.billingAddress,
+              zipCode: formData.billingZipCode
+            },
+            basketItems: [
+              {
+                id: '1',
+                name: `${formData.duration} Hour Chauffeur Service`,
+                category1: 'Chauffeur',
+                itemType: 'PHYSICAL',
+                price: totalPrice.toString()
+              }
+            ]
+          };
+
+          // Make payment request to backend
+          const response = await fetch('http://localhost:3000/api/payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(paymentData),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.error || t('payment.paymentFailed'));
+          }
+
+          if (result.status !== 'success') {
+            throw new Error(result.errorMessage || t('payment.paymentFailed'));
+          }
+
+          // Log successful payment
+          console.log('Payment successful:', result);
+        }
+
+        setFormSubmitted(true);
+        // Generate a booking ID
+        const newBookingId = generateBookingId();
+        setBookingId(newBookingId);
+        onSubmit(formData);
+        // Show the confirmation modal instead of the inline confirmation
+        setShowConfirmation(true);
+        // Reset the flag after submission
+        setConfirmClicked(false);
+      } catch (error) {
+        console.error('Payment error:', error);
+        // Show error message in a more user-friendly way
+        alert(error instanceof Error ? error.message : t('payment.paymentError'));
+      }
     } else {
       // If not on the confirm step or confirm not clicked, just go to the next step
       nextStep();
@@ -115,7 +313,8 @@ export default function ChauffeurBookingForm({
         );
       case 2: // Contact info
         return (
-          formData.contactName !== '' &&
+          formData.firstName !== '' &&
+          formData.lastName !== '' &&
           formData.contactEmail !== '' &&
           formData.contactPhone !== ''
         );
@@ -161,7 +360,7 @@ export default function ChauffeurBookingForm({
                 value={formData.pickupLocation}
                 onChange={handleChange}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2"
-                placeholder="Enter full pickup address"
+                placeholder={t("chauffeur.booking.pickupLocation")}
                 required
               />
               <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -180,7 +379,7 @@ export default function ChauffeurBookingForm({
                 value={formData.dropoffLocation}
                 onChange={handleChange}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2"
-                placeholder="Enter full drop-off address"
+                placeholder={t("chauffeur.booking.dropoffLocation")}
                 required
               />
               <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -214,15 +413,21 @@ export default function ChauffeurBookingForm({
               {t("chauffeur.booking.pickupTime")} *
             </label>
             <div className="relative">
-              <input
-                type="time"
+              <select
                 id="pickupTime"
                 name="pickupTime"
                 value={formData.pickupTime}
                 onChange={handleChange}
                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-10 py-2"
                 required
-              />
+              >
+                <option value="">{t("booking.selectTime")}</option>
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                    {`${i.toString().padStart(2, '0')}:00`}
+                  </option>
+                ))}
+              </select>
               <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             </div>
           </div>
@@ -289,7 +494,7 @@ export default function ChauffeurBookingForm({
             value={formData.specialRequests}
             onChange={handleChange}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
-            placeholder="Any special requirements or additional information"
+            placeholder={t("booking.addSpecialRequests")}
           ></textarea>
         </div>
       </div>
@@ -304,14 +509,14 @@ export default function ChauffeurBookingForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">
-              {t("chauffeur.booking.fullName")} *
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+              {t("booking.firstName")} *
             </label>
             <input
               type="text"
-              id="contactName"
-              name="contactName"
-              value={formData.contactName}
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
               onChange={handleChange}
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
               required
@@ -319,17 +524,16 @@ export default function ChauffeurBookingForm({
           </div>
 
           <div>
-            <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
-              {t("chauffeur.booking.phoneNumber")} *
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+              {t("booking.lastName")} *
             </label>
             <input
-              type="tel"
-              id="contactPhone"
-              name="contactPhone"
-              value={formData.contactPhone}
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
               onChange={handleChange}
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
-              placeholder="+90 5XX XXX XXXX"
               required
             />
           </div>
@@ -350,6 +554,89 @@ export default function ChauffeurBookingForm({
           />
         </div>
 
+        <div>
+          <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
+            {t("chauffeur.booking.phoneNumber")} *
+          </label>
+          <input
+            type="tel"
+            id="contactPhone"
+            name="contactPhone"
+            value={formData.contactPhone}
+            onChange={handleChange}
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+            placeholder="+90 5XX XXX XXXX"
+            required
+          />
+        </div>
+
+        {/* Billing Address */}
+        <div className="border-t pt-6 mt-6">
+          <h4 className="text-lg font-semibold mb-4">{t("payment.billingAddress")}</h4>
+          
+          <div>
+            <label htmlFor="billingAddress" className="block text-sm font-medium text-gray-700 mb-1">
+              {t("payment.address")} *
+            </label>
+            <input
+              type="text"
+              id="billingAddress"
+              name="billingAddress"
+              value={formData.billingAddress}
+              onChange={handleChange}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div>
+              <label htmlFor="billingCity" className="block text-sm font-medium text-gray-700 mb-1">
+                {t("payment.city")} *
+              </label>
+              <input
+                type="text"
+                id="billingCity"
+                name="billingCity"
+                value={formData.billingCity}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="billingCountry" className="block text-sm font-medium text-gray-700 mb-1">
+                {t("payment.country")} *
+              </label>
+              <input
+                type="text"
+                id="billingCountry"
+                name="billingCountry"
+                value={formData.billingCountry}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="billingZipCode" className="block text-sm font-medium text-gray-700 mb-1">
+                {t("payment.zipCode")} *
+              </label>
+              <input
+                type="text"
+                id="billingZipCode"
+                name="billingZipCode"
+                value={formData.billingZipCode}
+                onChange={handleChange}
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-600">
           <p>{t('booking.requiredFields')}</p>
         </div>
@@ -359,121 +646,189 @@ export default function ChauffeurBookingForm({
 
   // Booking summary
   const renderSummaryStep = () => {
-    // Calculate estimated price based on duration
-    const rate = hourlyRate || vehicle.basePrice;
-    const totalPrice = rate * formData.duration;
+    const totalPrice = formData.duration * (hourlyRate || 0);
 
     return (
       <div className="space-y-6">
-        <h3 className="text-xl font-bold text-primary">{t("chauffeur.booking.bookingSummary")}</h3>
+        <h3 className="text-xl font-bold text-primary">{t("chauffeur.booking.reviewConfirm")}</h3>
 
-        <div className="bg-gray-50 p-5 rounded-lg">
-          <div className="flex items-center mb-4">
-            <TruckIcon className="h-6 w-6 text-secondary mr-2" />
-            <h4 className="font-medium text-lg">{vehicle.name}</h4>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-            <div className="flex items-start">
-              <MapPinIcon className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-500">{t("chauffeur.booking.pickupLocation")}</p>
-                <p className="font-medium">{formData.pickupLocation}</p>
-                <p className="text-sm mt-1">{formData.pickupDate} at {formData.pickupTime}</p>
-              </div>
+        {/* Trip Summary */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-semibold mb-3">{t("chauffeur.booking.tripDetails")}</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.pickupLocation")}:</span>
+              <span className="font-medium">{formData.pickupLocation}</span>
             </div>
-
-            <div className="flex items-start">
-              <MapPinIcon className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-500">{t("chauffeur.booking.dropoffLocation")}</p>
-                <p className="font-medium">{formData.dropoffLocation}</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.dropoffLocation")}:</span>
+              <span className="font-medium">{formData.dropoffLocation}</span>
             </div>
-
-            <div className="flex items-start">
-              <ClockIcon className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-500">{t("chauffeur.booking.duration")}</p>
-                <p className="font-medium">{formData.duration} {t("chauffeur.hours")}</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.pickupDate")}:</span>
+              <span className="font-medium">{formData.pickupDate}</span>
             </div>
-
-            <div className="flex items-start">
-              <UserIcon className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-500">{t("transfer.passengers")}</p>
-                <p className="font-medium">{formData.passengers} {formData.passengers > 1 ? t("booking.guests") : t("booking.guest")}</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.pickupTime")}:</span>
+              <span className="font-medium">{formData.pickupTime}</span>
             </div>
-          </div>
-
-          {formData.specialRequests && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500">{t("chauffeur.booking.specialRequests")}</p>
-              <p className="text-gray-700 mt-1">{formData.specialRequests}</p>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.duration")}:</span>
+              <span className="font-medium">{formData.duration} {t("chauffeur.hours")}</span>
             </div>
-          )}
-        </div>
-
-        <div className="border-t border-b py-4">
-          <div className="flex justify-between mb-2">
-            <span className="font-medium">{t("chauffeur.booking.hourlyRate")}</span>
-            <span>€{rate}/{t("chauffeur.hours")}</span>
-          </div>
-          <div className="flex justify-between mb-2">
-            <span className="font-medium">{t("chauffeur.booking.duration")}</span>
-            <span>{formData.duration} {t("chauffeur.hours")}</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t">
-            <span>{t("chauffeur.booking.estimatedTotal")}</span>
-            <span className="text-secondary">€{totalPrice}</span>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.passengers")}:</span>
+              <span className="font-medium">{formData.passengers}</span>
+            </div>
           </div>
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-md">
-          <h4 className="font-medium mb-2">{t("chauffeur.booking.bookingDetails")}</h4>
-          <p className="mb-1">{formData.contactName}</p>
-          <p className="mb-1">{formData.contactEmail}</p>
-          <p>{formData.contactPhone}</p>
+        {/* Contact Information */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-semibold mb-3">{t("chauffeur.booking.contactInfo")}</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.fullName")}:</span>
+              <span className="font-medium">{formData.firstName} {formData.lastName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.email")}:</span>
+              <span className="font-medium">{formData.contactEmail}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{t("chauffeur.booking.phoneNumber")}:</span>
+              <span className="font-medium">{formData.contactPhone}</span>
+            </div>
+          </div>
         </div>
 
         {/* Payment Method */}
-        <div>
-          <h4 className="text-md font-medium text-gray-700 mb-2">{t('transfer.paymentMethod')}</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className={`
-              flex items-center p-3 rounded-lg border-2 cursor-pointer
-              ${formData.paymentMethod === 'cash' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
-            `}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cash"
-                checked={formData.paymentMethod === 'cash'}
-                onChange={handleChange}
-                className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
-              />
-              <span className="ml-2 text-sm font-medium">{t('transfer.cash')}</span>
-            </label>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-semibold mb-3">{t("booking.paymentMethod")}</h4>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className={`
+                flex items-center p-3 rounded-lg border-2 cursor-pointer
+                ${formData.paymentMethod === 'cash' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+              `}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cash"
+                  checked={formData.paymentMethod === 'cash'}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
+                />
+                <span className="ml-2 text-sm font-medium">{t("booking.cash")}</span>
+              </label>
 
-            <label className={`
-              flex items-center p-3 rounded-lg border-2 cursor-not-allowed opacity-50
-              ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200'}
-            `}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="creditCard"
-                checked={formData.paymentMethod === 'creditCard'}
-                onChange={handleChange}
-                disabled
-                className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300 cursor-not-allowed"
-              />
-              <span className="ml-2 text-sm font-medium">{t('transfer.creditCard')}</span>
-            </label>
+              <label className={`
+                flex items-center p-3 rounded-lg border-2 cursor-pointer
+                ${formData.paymentMethod === 'creditCard' ? 'border-secondary bg-secondary/10' : 'border-gray-200 hover:border-gray-300'}
+              `}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="creditCard"
+                  checked={formData.paymentMethod === 'creditCard'}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-secondary focus:ring-secondary border-gray-300"
+                />
+                <span className="ml-2 text-sm font-medium">{t("booking.creditCard")}</span>
+              </label>
+            </div>
+
+            {/* Credit Card Form Fields */}
+            {formData.paymentMethod === 'creditCard' && (
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("payment.cardNumber")} *
+                  </label>
+                  <input
+                    type="text"
+                    id="cardNumber"
+                    name="cardNumber"
+                    value={formData.cardNumber || ''}
+                    onChange={handleChange}
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                    placeholder="1234 5678 9012 3456"
+                    maxLength={19}
+                    required={formData.paymentMethod === 'creditCard'}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="cardHolderName" className="block text-sm font-medium text-gray-700 mb-1">
+                    {t("payment.cardholderName")} *
+                  </label>
+                  <input
+                    type="text"
+                    id="cardHolderName"
+                    name="cardHolderName"
+                    value={formData.cardHolderName || ''}
+                    onChange={handleChange}
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                    placeholder="JOHN DOE"
+                    required={formData.paymentMethod === 'creditCard'}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">
+                      {t("payment.expiryDate")} *
+                    </label>
+                    <input
+                      type="text"
+                      id="expiryDate"
+                      name="expiryDate"
+                      value={formData.expiryDate || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                      placeholder="MM/YY"
+                      maxLength={5}
+                      required={formData.paymentMethod === 'creditCard'}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">
+                      {t("payment.cvv")} *
+                    </label>
+                    <input
+                      type="text"
+                      id="cvv"
+                      name="cvv"
+                      value={formData.cvv || ''}
+                      onChange={handleChange}
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                      placeholder="123"
+                      maxLength={4}
+                      required={formData.paymentMethod === 'creditCard'}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Total Price */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-semibold">{t("booking.totalPrice")}:</span>
+            <span className="text-2xl font-bold text-secondary">€{totalPrice}</span>
+          </div>
+        </div>
+
+        {/* Special Requests */}
+        {formData.specialRequests && (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-semibold mb-2">{t("chauffeur.booking.specialRequests")}</h4>
+            <p className="text-sm text-gray-600">{formData.specialRequests}</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -600,7 +955,7 @@ export default function ChauffeurBookingForm({
         }}
         bookingDetails={{
           bookingId: bookingId,
-          customerName: formData.contactName,
+          customerName: formData.firstName + ' ' + formData.lastName,
           serviceName: t("chauffeur.title"),
           date: formData.pickupDate,
           time: formData.pickupTime,

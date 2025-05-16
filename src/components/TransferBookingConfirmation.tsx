@@ -43,6 +43,12 @@ interface FormData {
   phone: string;
   specialRequests: string;
   paymentMethod: 'cash' | 'creditCard';
+  // Billing information
+  billingAddress: string;
+  billingCity: string;
+  billingCountry: string;
+  billingZipCode: string;
+  // Card information
   cardNumber?: string;
   cardHolderName?: string;
   expiryDate?: string;
@@ -64,6 +70,16 @@ export default function TransferBookingConfirmation({
     phone: '',
     specialRequests: '',
     paymentMethod: 'cash',
+    // Billing information
+    billingAddress: '',
+    billingCity: 'Istanbul',
+    billingCountry: 'Turkey',
+    billingZipCode: '',
+    // Card information
+    cardNumber: '',
+    cardHolderName: '',
+    expiryDate: '',
+    cvv: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -83,6 +99,16 @@ export default function TransferBookingConfirmation({
         phone: '',
         specialRequests: '',
         paymentMethod: 'cash',
+        // Billing information
+        billingAddress: '',
+        billingCity: 'Istanbul',
+        billingCountry: 'Turkey',
+        billingZipCode: '',
+        // Card information
+        cardNumber: '',
+        cardHolderName: '',
+        expiryDate: '',
+        cvv: ''
       });
       setBookingReference('');
       setEmailStatus(null);
@@ -94,10 +120,36 @@ export default function TransferBookingConfirmation({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Kart numarası formatlaması
+    if (name === 'cardNumber') {
+      const formattedValue = value
+        .replace(/\D/g, '') // Sadece sayıları al
+        .replace(/(\d{4})/g, '$1 ') // Her 4 rakamdan sonra boşluk ekle
+        .trim(); // Baştaki ve sondaki boşlukları temizle
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // Son kullanma tarihi formatlaması
+    if (name === 'expiryDate') {
+      const formattedValue = value
+        .replace(/\D/g, '') // Sadece sayıları al
+        .replace(/(\d{2})(\d{0,2})/, '$1/$2') // MM/YY formatı
+        .substring(0, 5); // Maksimum 5 karakter (MM/YY)
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // CVV için sadece sayı girişi
+    if (name === 'cvv') {
+      const formattedValue = value.replace(/\D/g, '').substring(0, 4);
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+      return;
+    }
+
+    // Diğer alanlar için normal değişiklik
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,10 +181,15 @@ export default function TransferBookingConfirmation({
 
         // Prepare payment data for iyzico
         const paymentData = {
+          locale: 'tr',
+          conversationId: `TRF-${Date.now()}`,
           price: grandTotal.toString(),
           paidPrice: grandTotal.toString(),
           currency: 'EUR',
-          basketId: `B${Date.now()}`,
+          installment: '1',
+          basketId: `TRF-${Date.now()}`,
+          paymentChannel: 'WEB',
+          paymentGroup: 'PRODUCT',
           paymentCard: {
             cardHolderName: formData.cardHolderName,
             cardNumber: cardNumber,
@@ -141,33 +198,38 @@ export default function TransferBookingConfirmation({
             cvc: formData.cvv
           },
           buyer: {
-            id: `B${Date.now()}`,
+            id: `TRF-${Date.now()}`,
             name: formData.firstName,
             surname: formData.lastName,
+            gsmNumber: formData.phone,
             email: formData.email,
-            phone: formData.phone,
             identityNumber: '11111111111',
-            registrationAddress: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-            city: 'Istanbul',
-            country: 'Turkey',
-            ip: '85.34.78.112'
+            lastLoginDate: formatDateForIyzico(new Date()),
+            registrationDate: formatDateForIyzico(new Date()),
+            registrationAddress: formData.billingAddress,
+            ip: '85.34.78.112',
+            city: formData.billingCity,
+            country: formData.billingCountry,
+            zipCode: formData.billingZipCode
           },
           shippingAddress: {
             contactName: `${formData.firstName} ${formData.lastName}`,
-            city: 'Istanbul',
-            country: 'Turkey',
-            address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1'
+            city: formData.billingCity,
+            country: formData.billingCountry,
+            address: formData.billingAddress,
+            zipCode: formData.billingZipCode
           },
           billingAddress: {
             contactName: `${formData.firstName} ${formData.lastName}`,
-            city: 'Istanbul',
-            country: 'Turkey',
-            address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1'
+            city: formData.billingCity,
+            country: formData.billingCountry,
+            address: formData.billingAddress,
+            zipCode: formData.billingZipCode
           },
           basketItems: [
             {
               id: '1',
-              name: `${locations?.fromName} - ${locations?.toName} Transfer`,
+              name: `${transferData.transferType} Transfer Service`,
               category1: 'Transfer',
               itemType: 'PHYSICAL',
               price: grandTotal.toString()
@@ -258,6 +320,18 @@ export default function TransferBookingConfirmation({
     specialRequests: formData.specialRequests,
     transferType: transferData.transferType || 'airport',
     paymentMethod: formData.paymentMethod as 'creditCard' | 'cash'
+  };
+
+  // Helper function to format date for iyzico
+  const formatDateForIyzico = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
   return (
@@ -537,6 +611,7 @@ export default function TransferBookingConfirmation({
                                 onChange={handleChange}
                                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
                                 placeholder="1234 5678 9012 3456"
+                                maxLength={19} // 16 rakam + 3 boşluk
                                 required={formData.paymentMethod === 'creditCard'}
                               />
                             </div>
@@ -570,6 +645,7 @@ export default function TransferBookingConfirmation({
                                   onChange={handleChange}
                                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
                                   placeholder="MM/YY"
+                                  maxLength={5}
                                   required={formData.paymentMethod === 'creditCard'}
                                 />
                               </div>
@@ -586,12 +662,80 @@ export default function TransferBookingConfirmation({
                                   onChange={handleChange}
                                   className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
                                   placeholder="123"
+                                  maxLength={4}
                                   required={formData.paymentMethod === 'creditCard'}
                                 />
                               </div>
                             </div>
                           </div>
                         )}
+                      </div>
+
+                      {/* Add Billing Address section after contact information */}
+                      <div className="border-t pt-6 mt-6">
+                        <h4 className="text-lg font-semibold mb-4">{t("payment.billingAddress")}</h4>
+                        
+                        <div>
+                          <label htmlFor="billingAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                            {t("payment.address")} *
+                          </label>
+                          <input
+                            type="text"
+                            id="billingAddress"
+                            name="billingAddress"
+                            value={formData.billingAddress}
+                            onChange={handleChange}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                          <div>
+                            <label htmlFor="billingCity" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t("payment.city")} *
+                            </label>
+                            <input
+                              type="text"
+                              id="billingCity"
+                              name="billingCity"
+                              value={formData.billingCity}
+                              onChange={handleChange}
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="billingCountry" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t("payment.country")} *
+                            </label>
+                            <input
+                              type="text"
+                              id="billingCountry"
+                              name="billingCountry"
+                              value={formData.billingCountry}
+                              onChange={handleChange}
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="billingZipCode" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t("payment.zipCode")} *
+                            </label>
+                            <input
+                              type="text"
+                              id="billingZipCode"
+                              name="billingZipCode"
+                              value={formData.billingZipCode}
+                              onChange={handleChange}
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 py-2"
+                              required
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       <div className="bg-gray-50 p-4 rounded-md text-sm text-gray-600">

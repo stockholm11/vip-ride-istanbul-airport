@@ -103,14 +103,53 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
     passengers: 1,
     luggage: 1,
     roundTrip: false,
+    returnDate: '',
+    returnTime: '',
     direction: 'fromAirport', // Default direction
   });
 
   // Calculate min date (today)
   const today = new Date().toISOString().split('T')[0];
 
+  // Add validation function for date and time
+  const isDateTimeValid = (selectedDate: string, selectedTime: string) => {
+    const now = new Date();
+    const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+    
+    // Add 1 hour buffer to prevent bookings too close to current time
+    const bufferTime = new Date(now.getTime() + 60 * 60 * 1000);
+    
+    return selectedDateTime >= bufferTime;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>) => {
     const { name, value, type } = e.target;
+
+    // Special handling for date and time validation
+    if (name === 'date' || name === 'time' || name === 'returnDate' || name === 'returnTime') {
+      const newDate = name === 'date' ? value : formData.date;
+      const newTime = name === 'time' ? value : formData.time;
+      
+      if (newDate && newTime) {
+        if (!isDateTimeValid(newDate, newTime)) {
+          alert(t('booking.invalidDateTime'));
+          return;
+        }
+      }
+
+      // For return trip validation
+      if (name === 'returnDate' || name === 'returnTime') {
+        const newReturnDate = name === 'returnDate' ? value : formData.returnDate;
+        const newReturnTime = name === 'returnTime' ? value : formData.returnTime;
+        
+        if (newReturnDate && newReturnTime) {
+          if (!isDateTimeValid(newReturnDate, newReturnTime)) {
+            alert(t('booking.invalidDateTime'));
+            return;
+          }
+        }
+      }
+    }
 
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
