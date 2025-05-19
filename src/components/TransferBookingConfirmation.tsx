@@ -157,124 +157,104 @@ export default function TransferBookingConfirmation({
     setIsSubmitting(true);
 
     try {
-      if (formData.paymentMethod === 'creditCard') {
-        // Validate credit card fields
-        if (!formData.cardNumber || !formData.cardHolderName || !formData.expiryDate || !formData.cvv) {
-          throw new Error(t('payment.pleaseFillAllFields'));
-        }
+      // Kart numarasından boşlukları kaldır
+      const cardNumber = formData.cardNumber?.replace(/\s/g, '') || '';
 
-        // Validate card number format
-        const cardNumber = formData.cardNumber.replace(/\s/g, '');
-        if (!/^\d{16}$/.test(cardNumber)) {
-          throw new Error(t('payment.invalidCardNumber'));
-        }
-
-        // Validate expiry date format
-        if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
-          throw new Error(t('payment.invalidExpiryDate'));
-        }
-
-        // Validate CVV format
-        if (!/^\d{3,4}$/.test(formData.cvv)) {
-          throw new Error(t('payment.invalidCvv'));
-        }
-
-        // Prepare payment data for iyzico
-        const paymentData = {
-          locale: 'tr',
-          conversationId: `TRF-${Date.now()}`,
-          price: grandTotal.toString(),
-          paidPrice: grandTotal.toString(),
-          currency: 'EUR',
-          installment: '1',
-          basketId: `TRF-${Date.now()}`,
-          paymentChannel: 'WEB',
-          paymentGroup: 'PRODUCT',
-          paymentCard: {
-            cardHolderName: formData.cardHolderName,
-            cardNumber: cardNumber,
-            expireMonth: formData.expiryDate.split('/')[0],
-            expireYear: `20${formData.expiryDate.split('/')[1]}`,
-            cvc: formData.cvv
-          },
-          buyer: {
+      // Prepare payment data for iyzico
+      const paymentData = {
+        locale: 'tr',
+        conversationId: `TRF-${Date.now()}`,
+        price: grandTotal.toString(),
+        paidPrice: grandTotal.toString(),
+        currency: 'EUR',
+        installment: '1',
+        basketId: `TRF-${Date.now()}`,
+        paymentChannel: 'WEB',
+        paymentGroup: 'PRODUCT',
+        paymentCard: {
+          cardHolderName: formData.cardHolderName || '',
+          cardNumber: cardNumber,
+          expireMonth: formData.expiryDate?.split('/')[0] || '',
+          expireYear: formData.expiryDate ? `20${formData.expiryDate.split('/')[1]}` : '',
+          cvc: formData.cvv || ''
+        },
+        buyer: {
+          id: `TRF-${Date.now()}`,
+          name: formData.firstName,
+          surname: formData.lastName,
+          gsmNumber: formData.phone,
+          email: formData.email,
+          identityNumber: '11111111111',
+          lastLoginDate: formatDateForIyzico(new Date()),
+          registrationDate: formatDateForIyzico(new Date()),
+          registrationAddress: formData.billingAddress,
+          ip: '85.34.78.112',
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          zipCode: formData.billingZipCode
+        },
+        shippingAddress: {
+          contactName: `${formData.firstName} ${formData.lastName}`,
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          address: formData.billingAddress,
+          zipCode: formData.billingZipCode
+        },
+        billingAddress: {
+          contactName: `${formData.firstName} ${formData.lastName}`,
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          address: formData.billingAddress,
+          zipCode: formData.billingZipCode
+        },
+        basketItems: [
+          {
             id: `TRF-${Date.now()}`,
-            name: formData.firstName,
-            surname: formData.lastName,
-            gsmNumber: formData.phone,
-            email: formData.email,
-            identityNumber: '11111111111',
-            lastLoginDate: formatDateForIyzico(new Date()),
-            registrationDate: formatDateForIyzico(new Date()),
-            registrationAddress: formData.billingAddress,
-            ip: '85.34.78.112',
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            zipCode: formData.billingZipCode
-          },
-          shippingAddress: {
-            contactName: `${formData.firstName} ${formData.lastName}`,
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            address: formData.billingAddress,
-            zipCode: formData.billingZipCode
-          },
-          billingAddress: {
-            contactName: `${formData.firstName} ${formData.lastName}`,
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            address: formData.billingAddress,
-            zipCode: formData.billingZipCode
-          },
-          basketItems: [
-            {
-              id: '1',
-              name: `${transferData.transferType} Transfer Service`,
-              category1: 'Transfer',
-              itemType: 'PHYSICAL',
-              price: grandTotal.toString()
-            }
-          ]
-        };
-
-        // Make payment request to backend
-        const response = await fetch('http://localhost:3000/api/payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(paymentData),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || t('payment.paymentFailed'));
+            name: `${transferData.transferType} Transfer - ${vehicle.name}`,
+            category1: 'Transfer',
+            itemType: 'PHYSICAL',
+            price: grandTotal.toString()
+          }
+        ],
+        // Rezervasyon detaylarını ekle
+        bookingDetails: {
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          serviceName: `${transferData.transferType} Transfer - ${vehicle.name}`,
+          date: transferData.date,
+          time: transferData.time,
+          pickupLocation: locations.fromName,
+          dropoffLocation: locations.toName,
+          totalPrice: grandTotal,
+          bookingReference: `TRF-${Date.now()}`
         }
+      };
 
-        if (result.status !== 'success') {
-          throw new Error(result.errorMessage || t('payment.paymentFailed'));
-        }
+      const response = await fetch('http://localhost:3000/api/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(paymentData)
+      });
 
-        // Log successful payment
-        console.log('Payment successful:', result);
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        setBookingReference(paymentData.bookingDetails.bookingReference);
+        setEmailStatus('success');
+        setShowSuccessModal(true);
+      } else {
+        setEmailStatus('error');
+        alert(t('payment.paymentFailed'));
       }
-
-      // Generate a unique booking reference
-      const reference = generateBookingReference();
-      setBookingReference(reference);
-
-      // Show success state
-      setSubmitted(true);
-      setEmailStatus('success');
-
-      // Show the success modal
-      setShowSuccessModal(true);
-
     } catch (error) {
       console.error('Payment error:', error);
-      // Show error message in a more user-friendly way
-      alert(error instanceof Error ? error.message : t('payment.paymentError'));
+      setEmailStatus('error');
+      alert(t('payment.paymentError'));
     } finally {
       setIsSubmitting(false);
     }

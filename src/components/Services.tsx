@@ -11,21 +11,21 @@ const services = [
   {
     id: "vip-tours",
     title: "services.vipTours",
-    description: "Premium guided tours with luxury transportation to explore Istanbul and surroundings.",
+    description: "services.vipToursDesc",
     icon: <GlobeAltIcon className="h-12 w-12" />,
     url: "/vip-tours",
   },
   {
     id: "airport-transfer",
     title: "services.airportTransfer",
-    description: "Reliable airport transfers to and from Istanbul's airports with premium vehicles.",
+    description: "services.airportTransferDesc",
     icon: <TruckIcon className="h-12 w-12" />,
     url: "/transfer",
   },
   {
     id: "chauffeur",
     title: "services.chauffeur",
-    description: "Professional chauffeur services for business or leisure with top-notch vehicles.",
+    description: "services.chauffeurDesc",
     icon: <UserGroupIcon className="h-12 w-12" />,
     url: "/chauffeur",
   },
@@ -37,14 +37,19 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  hidden: { opacity: 0 },
+  show: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.3
+    } 
+  },
 };
 
 export default function Services() {
@@ -66,7 +71,7 @@ export default function Services() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true }}
           className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
         >
           {services.map((service) => (
@@ -81,7 +86,7 @@ export default function Services() {
               <h3 className="mb-4 text-xl font-bold text-primary">
                 {t(service.title)}
               </h3>
-              <p className="mb-6 text-gray-600">{service.description}</p>
+              <p className="mb-6 text-gray-600">{t(service.description)}</p>
               <Link
                 to={service.url}
                 className="inline-flex items-center font-semibold text-secondary transition-colors hover:text-secondary-dark"

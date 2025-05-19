@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
-import { CheckCircleIcon, PrinterIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, PrinterIcon, EnvelopeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { isRTL } from "../utils/i18n";
@@ -161,8 +161,17 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-3xl rounded-xl bg-white p-6 shadow-xl"
+              className="mx-auto max-w-3xl rounded-xl bg-white p-6 shadow-xl relative"
             >
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+
               {/* Printable content section */}
               <div ref={printRef} className="space-y-4 p-4">
                 {/* Logo and header */}
@@ -288,7 +297,7 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                     {t("chauffeur.booking.callUs")}: +90 543 156 8648
                   </p>
                   <p className="text-gray-600">
-                    Email: info@viprideistanbul.com
+                    Email: info@viprideistanbulairport.com
                   </p>
                 </div>
 
@@ -299,21 +308,13 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
               </div>
 
               {/* Actions - not included in printable area */}
-              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-between`}>
+              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-center`}>
                 <button
                   onClick={handlePrint}
                   className={`flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   <PrinterIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
                   {t("booking.printPdf")}
-                </button>
-                <button
-                  onClick={handleEmailConfirmation}
-                  disabled={emailStatus === 'pending'}
-                  className={`flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'} ${emailStatus === 'pending' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <EnvelopeIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
-                  {emailStatus === 'pending' ? t("booking.sendingEmail") : t("booking.emailConfirmation")}
                 </button>
               </div>
             </Dialog.Panel>

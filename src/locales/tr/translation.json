@@ -32,10 +32,15 @@
     "title": "Premium Hizmetlerimiz",
     "subtitle": "İhtiyaçlarınıza göre özelleştirilmiş lüks ulaşım deneyimi",
     "vipTours": "VIP Turlar",
+    "vipToursDesc": "İstanbul ve çevresini keşfetmek için lüks araçlarla premium rehberli turlar",
     "airportTransfer": "Havalimanı Transferi",
+    "airportTransferDesc": "İstanbul'un havalimanlarına ve havalimanlarından premium araçlarla güvenilir transfer hizmeti",
     "chauffeur": "Şoför Hizmetleri",
+    "chauffeurDesc": "İş veya eğlence için en üst düzey araçlarla profesyonel şoför hizmetleri",
     "intercityTransfer": "Şehirler Arası Transfer",
-    "hourlyRental": "Saatlik Kiralama"
+    "intercityTransferDesc": "Türkiye'nin her yerine lüks araçlarla konforlu seyahat",
+    "hourlyRental": "Saatlik Kiralama",
+    "hourlyRentalDesc": "İhtiyaçlarınıza göre özelleştirilmiş saatlik araç kiralama hizmeti"
   },
   "featured": {
     "popularTransfers": "Öne Çıkan Transferler",

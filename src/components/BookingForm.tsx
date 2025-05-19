@@ -31,7 +31,9 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     billingAddress: '',
     billingCity: '',
     billingCountry: '',
-    billingZipCode: ''
+    billingZipCode: '',
+    pickupLocation: '',
+    dropoffLocation: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -42,7 +44,9 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     date: '',
     time: '',
     guests: 0,
-    totalPrice: 0
+    totalPrice: 0,
+    pickupLocation: '',
+    dropoffLocation: ''
   });
 
   if (!tour) return null;
@@ -88,6 +92,35 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
   };
 
   const handleNext = () => {
+    // Tüm zorunlu alanları kontrol et
+    const requiredFields = {
+      firstName: t('booking.firstName'),
+      lastName: t('booking.lastName'),
+      email: t('booking.email'),
+      phone: t('booking.phone'),
+      date: t('booking.date'),
+      time: t('booking.time'),
+      guests: t('booking.numberOfGuests'),
+      pickupLocation: t('chauffeur.booking.pickupLocation'),
+      dropoffLocation: t('chauffeur.booking.dropoffLocation')
+    };
+
+    // Boş alanları bul
+    const emptyFields = Object.entries(requiredFields)
+      .filter(([key]) => !formData[key as keyof typeof formData]);
+
+    // Eğer boş alan varsa uyarı göster
+    if (emptyFields.length > 0) {
+      alert(t('booking.requiredFields'));
+      return;
+    }
+
+    // Tarih ve saat kontrolü
+    if (!isDateTimeValid(formData.date, formData.time)) {
+      alert(t('booking.invalidDateTime'));
+      return;
+    }
+
     setCurrentStep(2);
   };
 
@@ -106,130 +139,109 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     }
 
     try {
-      if (formData.paymentMethod === 'creditCard') {
-        // Validate credit card fields
-        if (!formData.cardNumber || !formData.cardHolderName || !formData.expiryDate || !formData.cvv) {
-          throw new Error(t('payment.pleaseFillAllFields'));
-        }
+      // Kart numarasından boşlukları kaldır
+      const cardNumber = formData.cardNumber.replace(/\s/g, '');
 
-        // Validate card number format
-        const cardNumber = formData.cardNumber.replace(/\s/g, '');
-        if (!/^\d{16}$/.test(cardNumber)) {
-          throw new Error(t('payment.invalidCardNumber'));
-        }
-
-        // Validate expiry date format
-        if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
-          throw new Error(t('payment.invalidExpiryDate'));
-        }
-
-        // Validate CVV format
-        if (!/^\d{3,4}$/.test(formData.cvv)) {
-          throw new Error(t('payment.invalidCvv'));
-        }
-
-        // Prepare payment data for iyzico
-        const paymentData = {
-          locale: 'tr',
-          conversationId: `TOUR-${Date.now()}`,
-          price: tour.price.toString(),
-          paidPrice: tour.price.toString(),
-          currency: 'EUR',
-          installment: '1',
-          basketId: `TOUR-${Date.now()}`,
-          paymentChannel: 'WEB',
-          paymentGroup: 'PRODUCT',
-          paymentCard: {
-            cardHolderName: formData.cardHolderName,
-            cardNumber: cardNumber,
-            expireMonth: formData.expiryDate.split('/')[0],
-            expireYear: `20${formData.expiryDate.split('/')[1]}`,
-            cvc: formData.cvv
-          },
-          buyer: {
+      // Prepare payment data for iyzico
+      const paymentData = {
+        locale: 'tr',
+        conversationId: `TOUR-${Date.now()}`,
+        price: (tour.price * formData.guests).toString(),
+        paidPrice: (tour.price * formData.guests).toString(),
+        currency: 'EUR',
+        installment: '1',
+        basketId: `TOUR-${Date.now()}`,
+        paymentChannel: 'WEB',
+        paymentGroup: 'PRODUCT',
+        paymentCard: {
+          cardHolderName: formData.cardHolderName,
+          cardNumber: cardNumber,
+          expireMonth: formData.expiryDate.split('/')[0],
+          expireYear: `20${formData.expiryDate.split('/')[1]}`,
+          cvc: formData.cvv
+        },
+        buyer: {
+          id: `TOUR-${Date.now()}`,
+          name: formData.firstName,
+          surname: formData.lastName,
+          gsmNumber: formData.phone,
+          email: formData.email,
+          identityNumber: '11111111111',
+          lastLoginDate: formatDateForIyzico(new Date()),
+          registrationDate: formatDateForIyzico(new Date()),
+          registrationAddress: formData.billingAddress,
+          ip: '85.34.78.112',
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          zipCode: formData.billingZipCode
+        },
+        shippingAddress: {
+          contactName: `${formData.firstName} ${formData.lastName}`,
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          address: formData.billingAddress,
+          zipCode: formData.billingZipCode
+        },
+        billingAddress: {
+          contactName: `${formData.firstName} ${formData.lastName}`,
+          city: formData.billingCity,
+          country: formData.billingCountry,
+          address: formData.billingAddress,
+          zipCode: formData.billingZipCode
+        },
+        basketItems: [
+          {
             id: `TOUR-${Date.now()}`,
-            name: formData.firstName,
-            surname: formData.lastName,
-            gsmNumber: formData.phone,
-            email: formData.email,
-            identityNumber: '11111111111',
-            lastLoginDate: formatDateForIyzico(new Date()),
-            registrationDate: formatDateForIyzico(new Date()),
-            registrationAddress: formData.billingAddress,
-            ip: '85.34.78.112',
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            zipCode: formData.billingZipCode
-          },
-          shippingAddress: {
-            contactName: `${formData.firstName} ${formData.lastName}`,
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            address: formData.billingAddress,
-            zipCode: formData.billingZipCode
-          },
-          billingAddress: {
-            contactName: `${formData.firstName} ${formData.lastName}`,
-            city: formData.billingCity,
-            country: formData.billingCountry,
-            address: formData.billingAddress,
-            zipCode: formData.billingZipCode
-          },
-          basketItems: [
-            {
-              id: '1',
-              name: tour.title,
-              category1: 'Tour',
-              itemType: 'PHYSICAL',
-              price: tour.price.toString()
-            }
-          ]
-        };
-
-        // Make payment request to backend
-        const response = await fetch('http://localhost:3000/api/payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(paymentData),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || t('payment.paymentFailed'));
+            name: tour.title,
+            category1: 'Tour',
+            itemType: 'PHYSICAL',
+            price: (tour.price * formData.guests).toString()
+          }
+        ],
+        // Rezervasyon detaylarını ekle
+        bookingDetails: {
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          serviceName: tour.title,
+          date: formData.date,
+          time: formData.time,
+          pickupLocation: formData.pickupLocation,
+          dropoffLocation: formData.dropoffLocation,
+          totalPrice: tour.price * formData.guests,
+          bookingReference: `TOUR-${Date.now()}`
         }
-
-        if (result.status !== 'success') {
-          throw new Error(result.errorMessage || t('payment.paymentFailed'));
-        }
-
-        // Log successful payment
-        console.log('Payment successful:', result);
-      }
-
-      // Generate a unique booking reference
-      const generatedBookingId = 'VR' + Math.floor(100000 + Math.random() * 900000);
-
-      // Create booking details for confirmation
-      const bookingDetailsData = {
-        bookingId: generatedBookingId,
-        customerName: `${formData.firstName} ${formData.lastName}`,
-        tourName: tour.title,
-        date: formData.date,
-        time: formData.time,
-        guests: formData.guests,
-        totalPrice: tour.price
       };
 
-      setBookingDetails(bookingDetailsData);
-      setShowConfirmation(true);
+      const response = await fetch('http://localhost:3000/api/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData)
+      });
 
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        setBookingDetails({
+          bookingId: paymentData.bookingDetails.bookingReference,
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          tourName: tour.title,
+          date: formData.date,
+          time: formData.time,
+          guests: formData.guests,
+          totalPrice: tour.price * formData.guests,
+          pickupLocation: formData.pickupLocation,
+          dropoffLocation: formData.dropoffLocation
+        });
+        setShowConfirmation(true);
+      } else {
+        alert(t('payment.paymentFailed'));
+      }
     } catch (error) {
       console.error('Payment error:', error);
-      // Show error message in a more user-friendly way
-      alert(error instanceof Error ? error.message : t('payment.paymentError'));
+      alert(t('payment.paymentError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -247,8 +259,8 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  const handleConfirmationClosed = () => {
-    setShowConfirmation(false);
+  const handleClose = () => {
+    // Form verilerini sıfırla
     setFormData({
       firstName: '',
       lastName: '',
@@ -266,9 +278,13 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
       billingAddress: '',
       billingCity: '',
       billingCountry: '',
-      billingZipCode: ''
+      billingZipCode: '',
+      pickupLocation: '',
+      dropoffLocation: ''
     });
+    // Adımı sıfırla
     setCurrentStep(1);
+    // Modalı kapat
     onClose();
   };
 
@@ -280,7 +296,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     return (
       <BookingConfirmation
         isOpen={showConfirmation}
-        onClose={handleConfirmationClosed}
+        onClose={handleClose}
         bookingDetails={bookingDetails}
       />
     );
@@ -288,7 +304,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-50" onClose={handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -319,7 +335,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                   </Dialog.Title>
 
                   <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-white hover:bg-primary-dark"
                   >
                     <XMarkIcon className="h-6 w-6" />
@@ -392,47 +408,75 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="relative">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
                             <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
                               {t('booking.date')} *
                             </label>
-                            <div className="relative">
-                              <input
-                                type="date"
-                                id="date"
-                                name="date"
-                                min={today}
-                                value={formData.date}
-                                onChange={handleChange}
-                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pr-10"
-                                required
-                              />
-                              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            </div>
+                            <input
+                              type="date"
+                              id="date"
+                              name="date"
+                              value={formData.date}
+                              onChange={handleChange}
+                              min={today}
+                              required
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                            />
                           </div>
-                          <div className="relative">
+                          <div>
                             <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
                               {t('booking.time')} *
                             </label>
-                            <select
-                              id="time"
-                              name="time"
-                              value={formData.time}
+                            <div className="relative">
+                              <select
+                                id="time"
+                                name="time"
+                                value={formData.time}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                              >
+                                <option value="">{t('booking.selectTime')}</option>
+                                {Array.from({ length: 24 }).map((_, i) => (
+                                  <option key={i} value={`${i.toString().padStart(2, '0')}:00`}>
+                                    {`${i.toString().padStart(2, '0')}:00`}
+                                  </option>
+                                ))}
+                              </select>
+                              <ClockIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label htmlFor="pickupLocation" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t('chauffeur.booking.pickupLocation')} *
+                            </label>
+                            <input
+                              type="text"
+                              id="pickupLocation"
+                              name="pickupLocation"
+                              value={formData.pickupLocation}
                               onChange={handleChange}
-                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
                               required
-                            >
-                              <option value="">{t('booking.selectTime')}</option>
-                              <option value="09:00">09:00</option>
-                              <option value="10:00">10:00</option>
-                              <option value="11:00">11:00</option>
-                              <option value="12:00">12:00</option>
-                              <option value="13:00">13:00</option>
-                              <option value="14:00">14:00</option>
-                              <option value="15:00">15:00</option>
-                              <option value="16:00">16:00</option>
-                            </select>
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                            />
+                          </div>
+                          <div>
+                            <label htmlFor="dropoffLocation" className="block text-sm font-medium text-gray-700 mb-1">
+                              {t('chauffeur.booking.dropoffLocation')} *
+                            </label>
+                            <input
+                              type="text"
+                              id="dropoffLocation"
+                              name="dropoffLocation"
+                              value={formData.dropoffLocation}
+                              onChange={handleChange}
+                              required
+                              className="w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50"
+                            />
                           </div>
                         </div>
 
@@ -480,7 +524,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                         <div className="flex justify-end mt-6">
                           <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="mr-3 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
                           >
                             {t('booking.cancel')}
@@ -513,6 +557,12 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                               <span>{formData.date} - {formData.time}</span>
                             </div>
 
+                            {/* Pickup & Dropoff Locations */}
+                            <div className="flex items-center">
+                              <MapPinIcon className="h-5 w-5 text-secondary mr-2" />
+                              <span>{formData.pickupLocation} - {formData.dropoffLocation}</span>
+                            </div>
+
                             {/* Guests */}
                             <div className="flex items-center">
                               <UserGroupIcon className="h-5 w-5 text-secondary mr-2" />
@@ -531,7 +581,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                         <div className="border-t border-b py-4 mb-6">
                           <div className="flex justify-between font-bold text-lg">
                             <span>{t('booking.totalPrice')}</span>
-                            <span className="text-secondary">{tour.price} €</span>
+                            <span className="text-secondary">{tour.price * formData.guests} €</span>
                           </div>
                         </div>
 
@@ -718,7 +768,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
                             onClick={(e) => {
                               e.preventDefault();
                               if (window.confirm(t('booking.confirmCancel'))) {
-                                onClose();
+                                handleClose();
                               }
                             }}
                             className="btn btn-outline-primary mr-3"

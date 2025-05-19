@@ -25,7 +25,7 @@ const testimonials = [
     role: "Senior Manager",
     company: "Tech Innovations",
     image: businessMan,
-    text: "I've used many transfer services around the world, but VIP Ride Istanbul stands out. The Sprinter VIP was luxurious and comfortable, making my intercity travel in Turkey a pleasure.",
+    text: "I've used many transfer services around the world, but VIP Ride Istanbul Airport stands out. The Sprinter VIP was luxurious and comfortable, making my intercity travel in Turkey a pleasure.",
     rating: 5,
     service: "Intercity Transfer"
   },

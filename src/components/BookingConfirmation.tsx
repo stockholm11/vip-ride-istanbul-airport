@@ -20,14 +20,13 @@ interface BookingConfirmationProps {
   bookingDetails: {
     bookingId: string;
     customerName: string;
-    tourName?: string;
-    serviceName?: string;
+    tourName: string;
     date: string;
     time: string;
-    guests?: number;
+    guests: number;
     totalPrice: number;
-    pickupLocation?: string;
-    dropoffLocation?: string;
+    pickupLocation: string;
+    dropoffLocation: string;
   };
 }
 
@@ -145,12 +144,7 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
   return (
     <Dialog
       open={isOpen}
-      onClose={() => {
-        // Prevent accidental closing - only allow closing if submitted
-        if (submitted) {
-          onClose();
-        }
-      }}
+      onClose={onClose}
       className="relative z-50"
     >
       {/* Background overlay */}
@@ -167,12 +161,12 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden"
+              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative"
             >
               {/* Close button */}
               <button
                 onClick={onClose}
-                className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} text-gray-400 hover:text-gray-600 transition-colors`}
+                className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} text-gray-400 hover:text-gray-600 transition-colors z-10`}
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -207,72 +201,47 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
                 {/* Booking details */}
                 <div className="border border-gray-200 rounded-lg p-6 mb-6">
                   <h3 className="text-lg font-bold text-primary mb-4 pb-2 border-b">
-                    {t("transfer.bookingSummary")}
+                    {t("booking.bookingDetails")}
                   </h3>
 
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("booking.bookingId")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.bookingId}</p>
+                  <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.bookingId")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.bookingId}</dd>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("booking.name")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.customerName}</p>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.name")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.customerName}</dd>
                     </div>
-
-                    {bookingDetails.tourName && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("booking.tour")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.tourName}</p>
-                      </div>
-                    )}
-
-                    {bookingDetails.serviceName && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("booking.service")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.serviceName}</p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("booking.date")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{formatDate(bookingDetails.date)}</p>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.tour")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.tourName}</dd>
                     </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <p className="text-gray-600">{t("booking.time")}:</p>
-                      <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.time}</p>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.date")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formatDate(bookingDetails.date)}</dd>
                     </div>
-
-                    {bookingDetails.guests && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("booking.guests")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>
-                          {bookingDetails.guests} {bookingDetails.guests === 1 ? t("booking.guest") : t("booking.guests")}
-                        </p>
-                      </div>
-                    )}
-
-                    {bookingDetails.pickupLocation && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.pickupLocation}</p>
-                      </div>
-                    )}
-
-                    {bookingDetails.dropoffLocation && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <p className="text-gray-600">{t("transfer.toLocation")}:</p>
-                        <p className={`font-medium text-gray-800 ${rtl ? 'text-right' : 'text-left'}`}>{bookingDetails.dropoffLocation}</p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2 pt-4 border-t mt-4">
-                      <p className="text-gray-800 font-bold">{t("transfer.totalPrice")}:</p>
-                      <p className={`font-bold text-primary ${rtl ? 'text-right' : 'text-left'}`}>{formatPrice(bookingDetails.totalPrice)}</p>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.time")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.time}</dd>
                     </div>
-                  </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("booking.numberOfGuests")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.guests}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("chauffeur.booking.pickupLocation")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.pickupLocation}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("chauffeur.booking.dropoffLocation")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{bookingDetails.dropoffLocation}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">{t("payment.total")}</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formatPrice(bookingDetails.totalPrice)}</dd>
+                    </div>
+                  </dl>
                 </div>
 
                 {/* Contact information */}
@@ -284,7 +253,7 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
                     {t("cta.callUs")}: +90 543 156 8648
                   </p>
                   <p className="text-gray-600">
-                    Email: info@viprideistanbul.com
+                    Email: info@viprideistanbulairport.com
                   </p>
                 </div>
 
@@ -295,20 +264,13 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
               </div>
 
               {/* Actions - not included in printable area */}
-              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-between`}>
+              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-center`}>
                 <button
                   onClick={handlePrint}
                   className={`flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   <PrinterIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
                   {t("booking.printPdf")}
-                </button>
-                <button
-                  onClick={handleEmailConfirmation}
-                  className={`flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
-                >
-                  <EnvelopeIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
-                  {t("booking.emailConfirmation")}
                 </button>
               </div>
             </Dialog.Panel>

@@ -181,8 +181,8 @@ export default function ContactPage() {
                       {t("contact.email")}
                     </h3>
                     <p className="text-gray-600">
-                      <a href="mailto:info@viprideistanbul.com">
-                        info@viprideistanbul.com
+                      <a href="mailto:info@viprideistanbulairport.com">
+                        info@viprideistanbulairport.com
                       </a>
                     </p>
                   </div>

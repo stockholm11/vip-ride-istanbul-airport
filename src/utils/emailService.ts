@@ -80,11 +80,11 @@ const generateBookingConfirmationEmail = (data: EmailData): string => {
 
   // Generate email content
   return `
-Subject: VIP Ride Istanbul - Your Booking Confirmation #${bookingReference}
+Subject: VIP Ride Istanbul Airport - Your Booking Confirmation #${bookingReference}
 
 Dear ${recipientName},
 
-Thank you for booking with VIP Ride Istanbul. Your reservation has been confirmed!
+Thank you for booking with VIP Ride Istanbul Airport. Your reservation has been confirmed!
 
 BOOKING DETAILS:
 --------------------------
@@ -111,7 +111,7 @@ If you need to modify your booking or have any questions, please contact us at:
 We look forward to providing you with a comfortable and luxurious transportation experience.
 
 Best regards,
-VIP Ride Istanbul Team
+VIP Ride Istanbul Airport Team
   `;
 };
 

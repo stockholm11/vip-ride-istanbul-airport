@@ -38,9 +38,24 @@ const QuickBookingWidget: React.FC<QuickBookingWidgetProps> = ({
   const isMobile = useIsMobile();
   const today = new Date().toISOString().split('T')[0];
 
+  // Şu anki saati al
+  const now = new Date();
+  const currentHour = now.getHours().toString().padStart(2, '0');
+  const currentTime = `${currentHour}:00`;
+
+  // Minimum tarih (şu anki zamandan 1 saat sonrası)
+  const minDate = new Date();
+  minDate.setHours(minDate.getHours() + 1);
+  const minDateStr = minDate.toISOString().split('T')[0];
+
+  // Maksimum tarih (30 gün sonrası)
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
+
   const [formData, setFormData] = useState({
-    date: today,
-    time: '10:00',
+    date: '',
+    time: currentTime,
     passengers: initialPassengers,
     luggage: initialLuggage,
     roundTrip: false,
@@ -58,6 +73,23 @@ const QuickBookingWidget: React.FC<QuickBookingWidgetProps> = ({
         [name]: checked
       }));
     } else {
+      // Tarih ve saat validasyonu
+      if (name === 'date' || name === 'time') {
+        const selectedDate = name === 'date' ? value : formData.date;
+        const selectedTime = name === 'time' ? value : formData.time;
+        
+        if (selectedDate && selectedTime) {
+          const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+          const now = new Date();
+          const bufferTime = new Date(now.getTime() + 60 * 60 * 1000); // 1 saat tampon
+          
+          if (selectedDateTime < bufferTime) {
+            alert(t('booking.invalidDateTime'));
+            return;
+          }
+        }
+      }
+
       setFormData(prev => ({
         ...prev,
         [name]: value
@@ -120,7 +152,8 @@ const QuickBookingWidget: React.FC<QuickBookingWidgetProps> = ({
                 type="date"
                 id="quick-date"
                 name="date"
-                min={today}
+                min={minDateStr}
+                max={maxDateStr}
                 value={formData.date}
                 onChange={handleChange}
                 className={`w-full rounded-md border-gray-300 shadow-sm focus:border-secondary focus:ring focus:ring-secondary focus:ring-opacity-50 pl-8 ${isMobile ? 'py-3 text-base' : ''}`}

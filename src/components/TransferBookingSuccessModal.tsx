@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog } from "@headlessui/react";
-import { CheckCircleIcon, PrinterIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, PrinterIcon, EnvelopeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { isRTL } from "../utils/i18n";
@@ -168,8 +168,17 @@ export default function TransferBookingSuccessModal({
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden"
+              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative"
             >
+              {/* Close button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+
               {/* Printable content section */}
               <div ref={printRef} className="space-y-4 p-4">
                 {/* Logo and header */}
@@ -270,7 +279,7 @@ export default function TransferBookingSuccessModal({
                     {t("cta.callUs")}: +90 543 156 8648
                   </p>
                   <p className="text-gray-600">
-                    Email: info@viprideistanbul.com
+                    Email: info@viprideistanbulairport.com
                   </p>
                 </div>
 
@@ -281,20 +290,13 @@ export default function TransferBookingSuccessModal({
               </div>
 
               {/* Actions - not included in printable area */}
-              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-between`}>
+              <div className={`px-6 py-4 bg-gray-50 flex ${rtl ? 'flex-row-reverse' : 'flex-row'} justify-center`}>
                 <button
                   onClick={handlePrint}
                   className={`flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   <PrinterIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
                   {t("booking.printPdf")}
-                </button>
-                <button
-                  onClick={handleEmailConfirmation}
-                  className={`flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors ${rtl ? 'flex-row-reverse' : 'flex-row'}`}
-                >
-                  <EnvelopeIcon className={`h-5 w-5 ${rtl ? 'ml-2' : 'mr-2'}`} />
-                  {t("booking.emailConfirmation")}
                 </button>
               </div>
             </Dialog.Panel>

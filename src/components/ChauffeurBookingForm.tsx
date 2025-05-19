@@ -246,7 +246,20 @@ export default function ChauffeurBookingForm({
                 itemType: 'PHYSICAL',
                 price: totalPrice.toString()
               }
-            ]
+            ],
+            // Rezervasyon detaylarını ekle
+            bookingDetails: {
+              email: formData.contactEmail,
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              serviceName: `${formData.duration} Hour Chauffeur Service - ${vehicle.name}`,
+              date: formData.pickupDate,
+              time: formData.pickupTime,
+              pickupLocation: formData.pickupLocation,
+              dropoffLocation: formData.dropoffLocation,
+              totalPrice: totalPrice,
+              bookingReference: `CHF-${Date.now()}`
+            }
           };
 
           // Make payment request to backend

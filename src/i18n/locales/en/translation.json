@@ -1,0 +1,11 @@
+{
+  "transfer": {
+    "locationRequired": "Please enter both pickup and dropoff locations",
+    "requiredFields": "Please fill in all required fields",
+    "enterPickupLocation": "Enter pickup location",
+  },
+  "booking": {
+    "locationRequired": "Please enter both pickup and dropoff locations"
+  }
+}
+ 

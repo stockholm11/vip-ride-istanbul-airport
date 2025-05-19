@@ -105,7 +105,7 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
     roundTrip: false,
     returnDate: '',
     returnTime: '',
-    direction: 'fromAirport', // Default direction
+    direction: 'fromAirport',
   });
 
   // Calculate min date (today)
@@ -202,6 +202,30 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
     // Filter out the currently selected fromLocation
     return options.filter(option => option.id !== formData.fromLocation);
   };
+
+  // Form verilerini sıfırlama fonksiyonu
+  const resetForm = () => {
+    setFormData({
+      transferType: initialTransferType,
+      fromLocation: '',
+      toLocation: '',
+      date: '',
+      time: '',
+      passengers: 1,
+      luggage: 1,
+      roundTrip: false,
+      returnDate: '',
+      returnTime: '',
+      direction: 'fromAirport',
+    });
+  };
+
+  // Form kapatıldığında verileri sıfırla
+  useEffect(() => {
+    return () => {
+      resetForm();
+    };
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">

@@ -55,7 +55,6 @@
     @apply bg-secondary text-white hover:bg-secondary-dark;
   }
 
-  /* Updated to match actual usage pattern */
   .btn-outline-primary {
     @apply border border-primary text-primary hover:bg-primary hover:text-white;
   }
@@ -69,7 +68,7 @@
   }
 
   .container {
-    @apply px-4 mx-auto max-w-7xl;
+    @apply px-4 mx-auto max-w-7xl w-full;
   }
 
   .navbar {

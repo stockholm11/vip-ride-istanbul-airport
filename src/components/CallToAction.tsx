@@ -29,10 +29,10 @@ export default function CallToAction() {
             </a>{" "}
             {t("cta.orEmail")}{" "}
             <a
-              href="mailto:info@viprideistanbul.com"
-              className="text-secondary font-bold hover:text-secondary-light transition-colors"
+              href="mailto:info@viprideistanbulairport.com"
+              className="text-secondary hover:text-secondary-dark"
             >
-              info@viprideistanbul.com
+              info@viprideistanbulairport.com
             </a>
           </p>
 

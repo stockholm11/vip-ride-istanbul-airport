@@ -1,39 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://viprideistanbul.com/</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://viprideistanbulairport.com/</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://viprideistanbul.com/transfer</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://viprideistanbulairport.com/transfer</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://viprideistanbul.com/chauffeur</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbul.com/tours</loc>
-    <lastmod>2024-03-20</lastmod>
+    <loc>https://viprideistanbulairport.com/transfer/airport</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://viprideistanbul.com/about</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://viprideistanbulairport.com/transfer/city</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/chauffeur</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/chauffeur/daily</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/chauffeur/hourly</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/tours</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/tours/istanbul</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://viprideistanbul.com/contact</loc>
-    <lastmod>2024-03-20</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://viprideistanbulairport.com/tours/cappadocia</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/about</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/contact</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/privacy-policy</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://viprideistanbulairport.com/terms-conditions</loc>
+    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset> 

@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://viprideistanbul.com/sitemap.xml
+Sitemap: https://viprideistanbulairport.com/sitemap.xml
 
 # Disallow admin and private routes
 Disallow: /admin/

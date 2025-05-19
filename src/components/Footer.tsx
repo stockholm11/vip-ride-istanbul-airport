@@ -67,7 +67,7 @@ export default function Footer() {
               </a>
             </div>
             <a
-              href="/vip-ride-istanbul-airport/tursab.png"
+              href="/tursab.png"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-secondary transition-colors mt-4 inline-block"
@@ -75,7 +75,7 @@ export default function Footer() {
               A Grubu Seyahat Acentası Belgesi
             </a>
             <a
-              href="/vip-ride-istanbul-airport/B2.png"
+              href="/B2.png"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-secondary transition-colors mt-2 inline-block block"
@@ -149,10 +149,26 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/airport-transfer"
+                  to="/transfer"
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.airportTransfer')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/transfer"
+                  className="text-gray-300 hover:text-secondary transition-colors inline-block"
+                >
+                  {t('nav.cityTransfer')}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/transfer"
+                  className="text-gray-300 hover:text-secondary transition-colors inline-block"
+                >
+                  {t('services.intercityTransfer')}
                 </Link>
               </li>
               <li>
@@ -161,14 +177,6 @@ export default function Footer() {
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.chauffeur')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/intercity-transfer"
-                  className="text-gray-300 hover:text-secondary transition-colors inline-block"
-                >
-                  {t('services.intercityTransfer')}
                 </Link>
               </li>
             </ul>

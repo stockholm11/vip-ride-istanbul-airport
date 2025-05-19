@@ -32,10 +32,15 @@
     "title": "خدماتنا المتميزة",
     "subtitle": "استمتع بتجربة نقل فاخرة مصممة حسب احتياجاتك",
     "vipTours": "جولات VIP",
+    "vipToursDesc": "اكتشف أجمل أماكن إسطنبول مع مرشدين محترفين",
     "airportTransfer": "نقل المطار",
+    "airportTransferDesc": "نقل مريح وآمن من المطار إلى وسط المدينة أو فندقك",
     "chauffeur": "خدمات السائق",
+    "chauffeurDesc": "خدمة نقل VIP مع سائقينا ذوي الخبرة والمهنية",
     "intercityTransfer": "خدمة النقل بين المدن",
-    "hourlyRental": "تأجير بالساعة"
+    "intercityTransferDesc": "سفر مريح بسيارات فاخرة إلى جميع أنحاء تركيا",
+    "hourlyRental": "تأجير بالساعة",
+    "hourlyRentalDesc": "خدمة تأجير سيارات بالساعة مصممة حسب احتياجاتك"
   },
   "featured": {
     "popularTransfers": "التحويلات المميزة",
