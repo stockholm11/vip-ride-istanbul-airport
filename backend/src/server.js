@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://vipride-istanbul.com', 'https://www.vipride-istanbul.com']
+        ? ['https://viprideistanbulairport.com', 'https://www.viprideistanbulairport.com']
         : 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
