@@ -144,7 +144,11 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
   return (
     <Dialog
       open={isOpen}
-      onClose={onClose}
+      onClose={() => {
+        onClose();
+        setEmailStatus(null);
+        setSubmitted(false);
+      }}
       className="relative z-50"
     >
       {/* Background overlay */}
@@ -165,7 +169,11 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
             >
               {/* Close button */}
               <button
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  setEmailStatus(null);
+                  setSubmitted(false);
+                }}
                 className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} text-gray-400 hover:text-gray-600 transition-colors z-10`}
               >
                 <XMarkIcon className="h-6 w-6" />

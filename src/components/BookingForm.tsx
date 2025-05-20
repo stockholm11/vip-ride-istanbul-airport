@@ -285,6 +285,8 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
     });
     // Adımı sıfırla
     setCurrentStep(1);
+    // Confirmation modalını kapat
+    setShowConfirmation(false);
     // Modalı kapat
     onClose();
   };
