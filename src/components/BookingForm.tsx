@@ -4,6 +4,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CalendarIcon, UserGroupIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { TourType } from './TourCard';
 import BookingConfirmation from './BookingConfirmation';
+import { API_ENDPOINTS } from '../services/api';
 
 interface BookingFormProps {
   isOpen: boolean;
@@ -213,7 +214,7 @@ export default function BookingForm({ isOpen, onClose, tour }: BookingFormProps)
         }
       };
 
-      const response = await fetch('http://localhost:3000/api/payment', {
+      const response = await fetch(API_ENDPOINTS.payment, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

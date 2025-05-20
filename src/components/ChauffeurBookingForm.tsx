@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ClockIcon, MapPinIcon, CalendarIcon, UserIcon, TruckIcon, CheckCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Vehicle } from "../data/vehicles";
 import ChauffeurBookingConfirmation from "./ChauffeurBookingConfirmation";
+import { API_ENDPOINTS } from '../services/api';
 
 interface ChauffeurBookingFormProps {
   vehicle: Vehicle;
@@ -263,7 +264,7 @@ export default function ChauffeurBookingForm({
           };
 
           // Make payment request to backend
-          const response = await fetch('http://localhost:3000/api/payment', {
+          const response = await fetch(API_ENDPOINTS.payment, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

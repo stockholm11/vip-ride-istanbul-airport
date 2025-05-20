@@ -17,6 +17,7 @@ import { TransferFormData } from './TransferBookingForm';
 import { Vehicle } from '../data/vehicles';
 import { sendBookingConfirmationEmail, generateBookingReference } from '../utils/emailService';
 import TransferBookingSuccessModal from './TransferBookingSuccessModal';
+import { API_ENDPOINTS } from '../services/api';
 
 // Extend the Vehicle interface to include price property
 interface VehicleWithPrice extends Vehicle {
@@ -231,13 +232,13 @@ export default function TransferBookingConfirmation({
         }
       };
 
-      const response = await fetch('http://localhost:3000/api/payment', {
+      const response = await fetch(API_ENDPOINTS.payment, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Origin': window.location.origin
         },
-        credentials: 'include',
         body: JSON.stringify(paymentData)
       });
 

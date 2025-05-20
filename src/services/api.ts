@@ -1,5 +1,7 @@
 // API base URL for production and development
-const API_BASE_URL = 'https://vip-ride-backend.onrender.com';
+const API_BASE_URL = import.meta.env.PROD
+  ? 'https://vip-ride-backend.onrender.com'
+  : 'http://localhost:3000';
 
 // API endpoints
 export const API_ENDPOINTS = {

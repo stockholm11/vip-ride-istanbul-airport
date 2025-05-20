@@ -9,11 +9,10 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://viprideistanbulairport.com', 'https://www.viprideistanbulairport.com']
-        : 'http://localhost:5173',
+    origin: true, // Tüm originlere izin ver
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'],
+    credentials: false // credentials'ı kapat
 }));
 app.use(express.json());
 
