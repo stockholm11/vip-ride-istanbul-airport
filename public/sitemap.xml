@@ -1,87 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Ana Sayfa -->
   <url>
-    <loc>https://viprideistanbulairport.com/</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <loc>https://viprideistanbulairport.com/en</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en"/>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- VIP Turlar -->
   <url>
-    <loc>https://viprideistanbulairport.com/transfer</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://viprideistanbulairport.com/en/vip-tours</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours"/>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- Transfer -->
   <url>
-    <loc>https://viprideistanbulairport.com/transfer/airport</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/transfer/city</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/chauffeur</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://viprideistanbulairport.com/en/transfer</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/transfer"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/transfer"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/transfer"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/transfer"/>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- Şoför Hizmeti -->
   <url>
-    <loc>https://viprideistanbulairport.com/chauffeur/daily</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/chauffeur/hourly</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/tours</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/tours/istanbul</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/tours/cappadocia</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://viprideistanbulairport.com/about</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <loc>https://viprideistanbulairport.com/en/chauffeur</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/chauffeur"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/chauffeur"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/chauffeur"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/chauffeur"/>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.9</priority>
   </url>
+
+  <!-- İletişim -->
   <url>
-    <loc>https://viprideistanbulairport.com/contact</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://viprideistanbulairport.com/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/contact"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
+
+  <!-- Gizlilik Politikası -->
   <url>
-    <loc>https://viprideistanbulairport.com/privacy-policy</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <loc>https://viprideistanbulairport.com/en/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/privacy-policy"/>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+
+  <!-- Kullanım Koşulları -->
   <url>
-    <loc>https://viprideistanbulairport.com/terms-conditions</loc>
-    <lastmod>2024-03-20T10:00:00+03:00</lastmod>
+    <loc>https://viprideistanbulairport.com/en/terms-conditions</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/terms-conditions"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/terms-conditions"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/terms-conditions"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/terms-conditions"/>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+
+  <!-- İptal Politikası -->
+  <url>
+    <loc>https://viprideistanbulairport.com/en/cancellation-policy</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/cancellation-policy"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/cancellation-policy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/cancellation-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/cancellation-policy"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- VIP Turlar Alt Kategorileri -->
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/cultural-historical</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/cultural-historical"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/cultural-historical"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/cultural-historical"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/cultural-historical"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/shopping-entertainment</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/shopping-entertainment"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/shopping-entertainment"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/shopping-entertainment"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/shopping-entertainment"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/nature-excursion</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/nature-excursion"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/nature-excursion"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/nature-excursion"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/nature-excursion"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/yacht-boat</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/yacht-boat"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/yacht-boat"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/yacht-boat"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/yacht-boat"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/medical</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/medical"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/medical"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/medical"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/medical"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/vip-tours/sports</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/vip-tours/sports"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/vip-tours/sports"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/vip-tours/sports"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/vip-tours/sports"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Transfer Alt Kategorileri -->
+  <url>
+    <loc>https://viprideistanbulairport.com/en/transfer/airport</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/transfer/airport"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/transfer/airport"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/transfer/airport"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/transfer/airport"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/transfer/intercity</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/transfer/intercity"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/transfer/intercity"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/transfer/intercity"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/transfer/intercity"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viprideistanbulairport.com/en/transfer/city</loc>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://viprideistanbulairport.com/tr/transfer/city"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://viprideistanbulairport.com/ar/transfer/city"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://viprideistanbulairport.com/en/transfer/city"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://viprideistanbulairport.com/en/transfer/city"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset> 
