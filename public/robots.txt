@@ -1,11 +1,85 @@
 # Allow all crawlers
 User-agent: *
 Allow: /
+Allow: /en/
+Allow: /tr/
+Allow: /ar/
+Allow: /en/vip-tours
+Allow: /tr/vip-tours
+Allow: /ar/vip-tours
+Allow: /en/transfer
+Allow: /tr/transfer
+Allow: /ar/transfer
+Allow: /en/chauffeur
+Allow: /tr/chauffeur
+Allow: /ar/chauffeur
+Allow: /en/contact
+Allow: /tr/contact
+Allow: /ar/contact
+Allow: /en/privacy-policy
+Allow: /tr/privacy-policy
+Allow: /ar/privacy-policy
+Allow: /en/terms-conditions
+Allow: /tr/terms-conditions
+Allow: /ar/terms-conditions
+Allow: /en/cancellation-policy
+Allow: /tr/cancellation-policy
+Allow: /ar/cancellation-policy
 
-# Sitemap location
+# VIP Tours Submenu
+Allow: /en/vip-tours/cultural-historical
+Allow: /tr/vip-tours/cultural-historical
+Allow: /ar/vip-tours/cultural-historical
+Allow: /en/vip-tours/shopping-entertainment
+Allow: /tr/vip-tours/shopping-entertainment
+Allow: /ar/vip-tours/shopping-entertainment
+Allow: /en/vip-tours/nature-excursion
+Allow: /tr/vip-tours/nature-excursion
+Allow: /ar/vip-tours/nature-excursion
+Allow: /en/vip-tours/yacht-boat
+Allow: /tr/vip-tours/yacht-boat
+Allow: /ar/vip-tours/yacht-boat
+Allow: /en/vip-tours/medical
+Allow: /tr/vip-tours/medical
+Allow: /ar/vip-tours/medical
+Allow: /en/vip-tours/sports
+Allow: /tr/vip-tours/sports
+Allow: /ar/vip-tours/sports
+
+# Transfer Submenu
+Allow: /en/transfer/airport
+Allow: /tr/transfer/airport
+Allow: /ar/transfer/airport
+Allow: /en/transfer/intercity
+Allow: /tr/transfer/intercity
+Allow: /ar/transfer/intercity
+Allow: /en/transfer/city
+Allow: /tr/transfer/city
+Allow: /ar/transfer/city
+
+# Disallow payment pages
+Disallow: /en/transfer/payment
+Disallow: /tr/transfer/payment
+Disallow: /ar/transfer/payment
+
+# Sitemap
 Sitemap: https://viprideistanbulairport.com/sitemap.xml
+
+# Host directive
+Host: viprideistanbulairport.com
 
 # Disallow admin and private routes
 Disallow: /admin/
 Disallow: /private/
-Disallow: /api/ 
+Disallow: /api/
+
+# Prevent crawling of search results
+Disallow: /search
+Disallow: /?search=
+
+# Prevent crawling of booking confirmation pages
+Disallow: /booking/confirmation/
+
+# Prevent crawling of user-specific pages
+Disallow: /user/
+Disallow: /profile/ 

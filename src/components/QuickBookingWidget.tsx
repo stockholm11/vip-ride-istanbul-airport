@@ -90,6 +90,22 @@ const QuickBookingWidget: React.FC<QuickBookingWidgetProps> = ({
         }
       }
 
+      // Dönüş tarihi validasyonu
+      if (name === 'returnDate' || name === 'returnTime') {
+        const returnDate = name === 'returnDate' ? value : formData.returnDate;
+        const returnTime = name === 'returnTime' ? value : formData.returnTime;
+        
+        if (returnDate && returnTime && formData.date && formData.time) {
+          const departureDateTime = new Date(`${formData.date}T${formData.time}`);
+          const returnDateTime = new Date(`${returnDate}T${returnTime}`);
+          
+          if (returnDateTime <= departureDateTime) {
+            alert(t('booking.invalidReturnDateTime'));
+            return;
+          }
+        }
+      }
+
       setFormData(prev => ({
         ...prev,
         [name]: value

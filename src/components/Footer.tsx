@@ -14,8 +14,18 @@ import {
 import Logo from "./Logo";
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentYear = new Date().getFullYear();
+
+  // Helper function to get localized path
+  const getLocalizedPath = (path: string) => {
+    // If the path already has a language prefix, return it as is
+    if (path.match(/^\/(en|tr|ar)\//)) {
+      return path;
+    }
+    // Otherwise, add the current language prefix
+    return `/${i18n.language}${path}`;
+  };
 
   return (
     <footer className="bg-primary text-white pt-16 pb-8">
@@ -92,7 +102,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  to="/"
+                  to={getLocalizedPath('/')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.home')}
@@ -100,7 +110,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/vip-tours"
+                  to={getLocalizedPath('/vip-tours')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.vipTours')}
@@ -108,7 +118,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/transfer"
+                  to={getLocalizedPath('/transfer')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.transfer')}
@@ -116,7 +126,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/chauffeur"
+                  to={getLocalizedPath('/chauffeur')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.chauffeur')}
@@ -124,7 +134,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/contact"
+                  to={getLocalizedPath('/contact')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.contact')}
@@ -141,7 +151,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  to="/vip-tours"
+                  to={getLocalizedPath('/vip-tours')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.vipTours')}
@@ -149,7 +159,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/transfer"
+                  to={getLocalizedPath('/transfer')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.airportTransfer')}
@@ -157,7 +167,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/transfer"
+                  to={getLocalizedPath('/transfer')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('nav.cityTransfer')}
@@ -165,7 +175,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/transfer"
+                  to={getLocalizedPath('/transfer')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.intercityTransfer')}
@@ -173,7 +183,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/chauffeur"
+                  to={getLocalizedPath('/chauffeur')}
                   className="text-gray-300 hover:text-secondary transition-colors inline-block"
                 >
                   {t('services.chauffeur')}
@@ -208,7 +218,7 @@ export default function Footer() {
                 <EnvelopeIcon className="h-5 w-5 text-secondary mr-3 flex-shrink-0" />
                 <a
                   href="mailto:info@viprideistanbulairport.com"
-                  className="text-gray-300 hover:text-secondary transition-colors break-all"
+                  className="text-gray-300 hover:text-secondary transition-colors"
                 >
                   info@viprideistanbulairport.com
                 </a>
@@ -248,24 +258,24 @@ export default function Footer() {
               © {currentYear} VIP Ride Istanbul Airport. {t('footer.rightsReserved')}
             </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 items-center">
-              <a
-                href="/privacy-policy"
+              <Link
+                to={getLocalizedPath('/privacy-policy')}
                 className="text-gray-400 hover:text-secondary transition-colors text-sm"
               >
                 {t('footer.privacyPolicy')}
-              </a>
-              <a
-                href="/terms"
+              </Link>
+              <Link
+                to={getLocalizedPath('/terms-conditions')}
                 className="text-gray-400 hover:text-secondary transition-colors text-sm"
               >
-                {t('footer.terms')}
-              </a>
-              <a
-                href="/cancellation-policy"
+                {t('footer.termsConditions')}
+              </Link>
+              <Link
+                to={getLocalizedPath('/cancellation-policy')}
                 className="text-gray-400 hover:text-secondary transition-colors text-sm"
               >
                 {t('footer.cancellationPolicy')}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

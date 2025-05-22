@@ -165,7 +165,7 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative"
+              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative max-h-[90vh] overflow-y-auto"
             >
               {/* Close button */}
               <button
@@ -174,17 +174,17 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
                   setEmailStatus(null);
                   setSubmitted(false);
                 }}
-                className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} text-gray-400 hover:text-gray-600 transition-colors z-10`}
+                className={`absolute top-2 ${rtl ? 'left-2' : 'right-2'} text-gray-400 hover:text-gray-600 transition-colors z-50 bg-white rounded-full p-1 shadow-md`}
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
 
               {/* Printable content section */}
-              <div ref={printRef} className="p-6 bg-white">
+              <div ref={printRef} className="p-4 bg-white mt-10">
                 {/* Logo and header */}
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mb-4">
                   <div className="text-center">
-                    <h1 className="text-2xl font-bold text-primary flex items-center justify-center">
+                    <h1 className="text-lg font-bold text-primary flex items-center justify-center">
                       VIP Ride
                       <span className={`text-sm font-normal text-gray-500 ${rtl ? 'mr-1' : 'ml-1'}`}>
                         {t("general.istanbulAirport")}
@@ -194,25 +194,25 @@ export default function BookingConfirmation({ isOpen, onClose, bookingDetails }:
                 </div>
 
                 {/* Success message */}
-                <div className="text-center mb-8">
-                  <div className="flex justify-center mb-4">
-                    <CheckCircleIcon className="h-16 w-16 text-green-500" />
+                <div className="text-center mb-4">
+                  <div className="flex justify-center mb-2">
+                    <CheckCircleIcon className="h-10 w-10 text-green-500" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-lg font-bold text-gray-800 mb-1">
                     {t("booking.bookingSuccess")}
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-xs">
                     {t("booking.confirmationEmail")}
                   </p>
                 </div>
 
                 {/* Booking details */}
-                <div className="border border-gray-200 rounded-lg p-6 mb-6">
-                  <h3 className="text-lg font-bold text-primary mb-4 pb-2 border-b">
+                <div className="border border-gray-200 rounded-lg p-4 mb-4">
+                  <h3 className="text-base font-bold text-primary mb-3 pb-2 border-b">
                     {t("booking.bookingDetails")}
                   </h3>
 
-                  <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
                     <div>
                       <dt className="text-sm font-medium text-gray-500">{t("booking.bookingId")}</dt>
                       <dd className="mt-1 text-sm text-gray-900">{bookingDetails.bookingId}</dd>

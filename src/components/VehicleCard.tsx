@@ -5,10 +5,7 @@ import {
   UsersIcon,
   BriefcaseIcon,
   CheckCircleIcon,
-  ArrowRightIcon,
-  ClockIcon,
 } from "@heroicons/react/24/outline";
-import { getEstimatedTime } from "../utils/distanceCalculator";
 import { Vehicle, TransferType } from "../data/vehicles";
 
 // Extend the Vehicle interface for our component to include price property
@@ -86,11 +83,11 @@ const VehicleCard = ({ vehicle, onSelectVehicle, selectedRoute, transferType = '
         <h3 className="text-xl font-bold text-primary mb-1">{vehicle.name}</h3>
 
         <div className="text-gray-500 mb-3 text-sm">
-          <span className="capitalize">{vehicle.category}</span>
+          <span className="capitalize">{t(`chauffeur.vehicleTypes.${vehicle.type}`)}</span>
         </div>
 
         <p className="text-gray-600 mb-4 line-clamp-2">
-          {t(`chauffeur.vehicleDescriptions.${vehicle.id}`) || vehicle.description}
+          {t(`chauffeur.vehicleDescriptions.${vehicle.id}`)}
         </p>
 
         {/* Vehicle Details */}
@@ -111,34 +108,11 @@ const VehicleCard = ({ vehicle, onSelectVehicle, selectedRoute, transferType = '
             {vehicle.features.slice(0, 4).map((feature, index) => (
               <div key={index} className="flex items-center text-gray-700 text-sm">
                 <CheckCircleIcon className="h-4 w-4 mr-1 text-secondary flex-shrink-0" />
-                <span className="truncate">{feature}</span>
+                <span className="truncate">{t(`chauffeur.features.${feature}`)}</span>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Route Info (if provided) */}
-        {selectedRoute && (
-          <div className="mb-4 p-3 bg-gray-50 rounded-md text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">{selectedRoute.from}</span>
-              <ArrowRightIcon className="h-4 w-4 mx-2 text-gray-400" />
-              <span className="text-gray-600">{selectedRoute.to}</span>
-            </div>
-            {selectedRoute.distance && (
-              <div className="text-xs text-gray-500 mt-1">
-                {t('transfer.actualDistance')}: {selectedRoute.distance} km
-              </div>
-            )}
-            {selectedRoute.distance && (
-              <div className="text-xs text-gray-500 mt-1 flex items-center">
-                <ClockIcon className="h-3 w-3 mr-1" />
-                {t('transfer.estimatedTravelTime')}: {getEstimatedTime(selectedRoute.distance)}
-              </div>
-            )}
-            {/* Removed the price calculation explanation display */}
-          </div>
-        )}
 
         {/* Button */}
         <button

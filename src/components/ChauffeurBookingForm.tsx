@@ -78,11 +78,10 @@ export default function ChauffeurBookingForm({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  // Flag to track if confirm button was clicked
   const [confirmClicked, setConfirmClicked] = useState(false);
-  // New state for confirmation modal
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookingId, setBookingId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Generate a random booking ID
   const generateBookingId = () => {
@@ -164,9 +163,11 @@ export default function ChauffeurBookingForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Only allow submission if user is on the Review & Confirm step AND confirm button was clicked
-    if (currentStep === 3 && confirmClicked) {
+    // Only allow submission if user is on the Review & Confirm step
+    if (currentStep === 3) {
       try {
+        setIsSubmitting(true);
+        
         if (formData.paymentMethod === 'creditCard') {
           // Validate credit card fields
           if (!formData.cardNumber || !formData.cardHolderName || !formData.expiryDate || !formData.cvv) {
@@ -206,9 +207,10 @@ export default function ChauffeurBookingForm({
             paymentCard: {
               cardHolderName: formData.cardHolderName,
               cardNumber: cardNumber,
+              expireYear: formData.expiryDate.split('/')[1],
               expireMonth: formData.expiryDate.split('/')[0],
-              expireYear: `20${formData.expiryDate.split('/')[1]}`,
-              cvc: formData.cvv
+              cvc: formData.cvv,
+              registerCard: '0'
             },
             buyer: {
               id: `CHF-${Date.now()}`,
@@ -248,7 +250,6 @@ export default function ChauffeurBookingForm({
                 price: totalPrice.toString()
               }
             ],
-            // Rezervasyon detaylarını ekle
             bookingDetails: {
               email: formData.contactEmail,
               firstName: formData.firstName,
@@ -291,18 +292,14 @@ export default function ChauffeurBookingForm({
         const newBookingId = generateBookingId();
         setBookingId(newBookingId);
         onSubmit(formData);
-        // Show the confirmation modal instead of the inline confirmation
+        // Show the confirmation modal
         setShowConfirmation(true);
-        // Reset the flag after submission
-        setConfirmClicked(false);
       } catch (error) {
-        console.error('Payment error:', error);
-        // Show error message in a more user-friendly way
-        alert(error instanceof Error ? error.message : t('payment.paymentError'));
+        console.error('Booking error:', error);
+        alert(error instanceof Error ? error.message : t('booking.bookingError'));
+      } finally {
+        setIsSubmitting(false);
       }
-    } else {
-      // If not on the confirm step or confirm not clicked, just go to the next step
-      nextStep();
     }
   };
 
@@ -843,6 +840,10 @@ export default function ChauffeurBookingForm({
             <p className="text-sm text-gray-600">{formData.specialRequests}</p>
           </div>
         )}
+
+        {/* Submit Button */}
+        <div className="flex flex-col sm:flex-row justify-end mt-6 space-y-3 sm:space-y-0 sm:space-x-3">
+        </div>
       </div>
     );
   };
@@ -906,12 +907,12 @@ export default function ChauffeurBookingForm({
               {renderStepContent()}
 
               {/* Navigation buttons */}
-              <div className="flex justify-between mt-8 pt-4 border-t">
+              <div className="flex flex-col sm:flex-row justify-between mt-8 pt-4 border-t space-y-3 sm:space-y-0">
                 {currentStep > 1 ? (
                   <button
                     type="button"
                     onClick={prevStep}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                    className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
                   >
                     {t("chauffeur.booking.back")}
                   </button>
@@ -919,7 +920,7 @@ export default function ChauffeurBookingForm({
                   <button
                     type="button"
                     onClick={onCancel}
-                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                    className="w-full sm:w-auto px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
                   >
                     {t("chauffeur.booking.cancel")}
                   </button>
@@ -934,7 +935,7 @@ export default function ChauffeurBookingForm({
                     }}
                     disabled={!isStepComplete()}
                     className={`
-                      px-6 py-2 rounded-md
+                      w-full sm:w-auto px-6 py-2 rounded-md
                       ${isStepComplete()
                         ? 'bg-secondary text-white hover:bg-secondary-dark'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'}
@@ -945,13 +946,20 @@ export default function ChauffeurBookingForm({
                 ) : (
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-secondary text-white font-semibold rounded-md hover:bg-secondary-dark transition-colors"
-                    onClick={() => {
-                      // Set the flag when confirm button is clicked
-                      setConfirmClicked(true);
-                    }}
+                    className="w-full sm:w-auto btn btn-secondary btn-md flex items-center justify-center"
+                    disabled={isSubmitting}
                   >
-                    {t("chauffeur.booking.confirmBooking")}
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {t('booking.processing')}
+                      </>
+                    ) : (
+                      t('booking.confirmAndPay')
+                    )}
                   </button>
                 )}
               </div>
@@ -967,6 +975,7 @@ export default function ChauffeurBookingForm({
           setShowConfirmation(false);
           onCancel(); // Close the form completely
         }}
+        submitted={true}
         bookingDetails={{
           bookingId: bookingId,
           customerName: formData.firstName + ' ' + formData.lastName,

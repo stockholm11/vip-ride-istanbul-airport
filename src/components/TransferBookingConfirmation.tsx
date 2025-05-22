@@ -386,7 +386,7 @@ export default function TransferBookingConfirmation({
                         {locations.distance && (
                           <div className="flex items-center ml-7">
                             <span className="text-gray-600">
-                              {t('transfer.actualDistance')}: {locations.distance} km
+                              {t('transfer.estimatedDistance')}: {locations.distance} km
                             </span>
                           </div>
                         )}

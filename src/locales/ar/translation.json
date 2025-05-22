@@ -178,8 +178,16 @@
     "creditCard": "بطاقة ائتمان",
     "cash": "نقداً",
     "confirmBooking": "تأكيد الحجز",
-    "close": "إغلاق",
-    "totalPrice": "السعر الإجمالي"
+    "totalPrice": "السعر الإجمالي",
+    "invalidDateTime": "يجب أن يكون التاريخ والوقت المحددان بعد ساعة واحدة على الأقل من الوقت الحالي.",
+    "invalidReturnDateTime": "يجب أن يكون تاريخ ووقت العودة بعد تاريخ ووقت المغادرة.",
+    "serviceName": "اسم الخدمة",
+    "duration": "المدة",
+    "passengers": "الركاب",
+    "pickupLocation": "موقع الاستلام",
+    "dropoffLocation": "موقع التسليم",
+    "estimatedDistance": "المسافة التقديرية",
+    "estimatedTravelTime": "الوقت المقدر للسفر"
   },
   "payment": {
     "title": "تفاصيل الدفع",
@@ -264,6 +272,9 @@
     "affordabilityText": "أسعار تنافسية بدون رسوم خفية، مما يضمن قيمة ممتازة للخدمة المتميزة.",
     "discount": "خصم",
     "estimatedDistance": "المسافة التقديرية",
+    "estimatedTravelTime": "الوقت المقدر للسفر",
+    "fixedPriceNote": "سعر ثابت لهذا النوع من المسار",
+    "priceExplanation": "حساب السعر",
     "selectVehicle": "اختيار المركبة",
     "confirmAndPay": "تأكيد والدفع",
     "bookingSuccess": "تم الحجز بنجاح!",
@@ -274,7 +285,19 @@
     "paymentMethod": "طريقة الدفع",
     "creditCard": "بطاقة ائتمان",
     "cash": "نقداً",
-    "confirmBooking": "تأكيد الحجز"
+    "confirmBooking": "تأكيد الحجز",
+    "priceCalculator": "حاسبة السعر",
+    "distanceBasedPricing": "تسعير قائم على المسافة",
+    "vehicleTypePricing": "نوع المركبة يؤثر على السعر",
+    "transferTypePricing": "نوع النقل يؤثر على السعر",
+    "pricingDetails": "تفاصيل التسعير",
+    "intraCityInfo": "النقل داخل المدينة: السعر الأساسي بالإضافة إلى المسافة",
+    "intercityInfo": "النقل بين المدن: سعر أقل لكل كيلومتر للمسافات الطويلة",
+    "airportInfo": "نقل المطار: نفس تسعير النقل داخل المدينة",
+    "completeBooking": "أكمل حجزك",
+    "completeYourBooking": "أدخل معلوماتك لإكمال الحجز",
+    "reviewAndPay": "راجع تفاصيل النقل وانتقل إلى الدفع",
+    "returnTrip": "رحلة العودة"
   },
   "chauffeur": {
     "title": "تأجير سيارة مع سائق",
@@ -453,17 +476,17 @@
     "saturdaySunday": "السبت - الأحد: 10 صباحًا - 4 مساءً"
   },
   "footer": {
-    "about": "توفر VIP Ride Istanbul Airport خدمات نقل متميزة مع أسطول من المركبات الفاخرة والسائقين المحترفين لرحلة مريحة.",
+    "about": "خدمات النقل VIP المتميزة في إسطنبول مع سائقين محترفين وسيارات فاخرة.",
     "quickLinks": "روابط سريعة",
     "ourServices": "خدماتنا",
     "contactUs": "اتصل بنا",
-    "newsletter": "اشترك في نشرتنا الإخبارية",
-    "newsletterText": "ابق على اطلاع بأحدث عروضنا وخدماتنا.",
-    "emailPlaceholder": "عنوان بريدك الإلكتروني",
+    "newsletter": "النشرة الإخبارية",
+    "newsletterText": "اشترك في نشرتنا الإخبارية للحصول على العروض الحصرية والتحديثات.",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
     "subscribe": "اشترك",
     "rightsReserved": "جميع الحقوق محفوظة.",
     "privacyPolicy": "سياسة الخصوصية",
-    "terms": "الشروط والأحكام",
+    "termsConditions": "الشروط والأحكام",
     "cancellationPolicy": "سياسة الإلغاء"
   },
   "cta": {

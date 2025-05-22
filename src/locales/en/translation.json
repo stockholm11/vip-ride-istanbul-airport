@@ -32,10 +32,15 @@
     "title": "Our Premium Services",
     "subtitle": "Experience luxury transportation tailored to your needs",
     "vipTours": "VIP Tours",
+    "vipToursDesc": "Discover Istanbul's most iconic landmarks with our exclusive VIP tours, featuring luxury vehicles and professional guides.",
     "airportTransfer": "Airport Transfer",
+    "airportTransferDesc": "Reliable and comfortable airport transfers to and from Istanbul's airports with our premium vehicle fleet.",
     "chauffeur": "Chauffeur Services",
+    "chauffeurDesc": "Professional chauffeur services for your business and personal needs in Istanbul.",
     "intercityTransfer": "Intercity Transfer",
-    "hourlyRental": "Hourly Rental"
+    "intercityTransferDesc": "Comfortable and safe intercity transfers to major cities across Turkey.",
+    "hourlyRental": "Hourly Rental",
+    "hourlyRentalDesc": "Flexible hourly rental services with professional drivers for your short-term transportation needs."
   },
   "featured": {
     "popularTransfers": "Featured Transfers",
@@ -59,9 +64,7 @@
     "seasonal": "Seasonal Specials",
     "viewAll": "View All Tours",
     "hours": "hours",
-    "viewDetails": "View Details",
-    "noToursAvailable": "No tours available",
-    "noToursMessage": "There are no {{filter}} tours available right now. Please check back later or try another category."
+    "viewDetails": "View Details"
   },
   "seasonalOffers": {
     "winter": {
@@ -239,13 +242,16 @@
     "bookingPaymentComment": "Payment Comment",
     "bookingPaymentReview": "Payment Review",
     "bookingPaymentRating": "Payment Rating",
-    "invalidDateTime": "Selected date and time cannot be before the current system time. Please make a reservation for at least 1 hour later.",
+    "invalidDateTime": "Selected date and time must be at least 1 hour after the current time.",
+    "invalidReturnDateTime": "Return date and time must be after departure date and time.",
     "serviceName": "Service Name",
     "duration": "Duration",
     "passengers": "Passengers",
     "pickupLocation": "Pickup Location",
     "dropoffLocation": "Dropoff Location",
-    "paymentMethod": "Payment Method"
+    "paymentMethod": "Payment Method",
+    "estimatedDistance": "Estimated Distance",
+    "estimatedTravelTime": "Estimated Travel Time"
   },
   "transfer": {
     "title": "Airport & Intercity Transfers",
@@ -269,7 +275,6 @@
     "luggage": "Luggage",
     "cityTransfer": "City Transfer",
     "estimatedDistance": "Estimated distance",
-    "actualDistance": "Actual distance",
     "estimatedTravelTime": "Estimated travel time",
     "fixedPriceNote": "Fixed price for this route type",
     "priceExplanation": "Price calculation",
@@ -511,17 +516,17 @@
     "saturdaySunday": "Saturday - Sunday: 10AM - 4PM"
   },
   "footer": {
-    "about": "VIP Ride Istanbul Airport provides premium transportation services with a fleet of luxury vehicles and professional drivers for a comfortable journey.",
+    "about": "Premium VIP transportation services in Istanbul with professional drivers and luxury vehicles.",
     "quickLinks": "Quick Links",
     "ourServices": "Our Services",
     "contactUs": "Contact Us",
-    "newsletter": "Subscribe to Our Newsletter",
-    "newsletterText": "Stay updated with our latest offers and services.",
-    "emailPlaceholder": "Your email address",
+    "newsletter": "Newsletter",
+    "newsletterText": "Subscribe to our newsletter for exclusive offers and updates.",
+    "emailPlaceholder": "Enter your email",
     "subscribe": "Subscribe",
     "rightsReserved": "All rights reserved.",
     "privacyPolicy": "Privacy Policy",
-    "terms": "Terms & Conditions",
+    "termsConditions": "Terms & Conditions",
     "cancellationPolicy": "Cancellation Policy"
   },
   "cta": {

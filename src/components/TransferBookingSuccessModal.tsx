@@ -168,23 +168,23 @@ export default function TransferBookingSuccessModal({
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative"
+              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative max-h-[90vh] overflow-y-auto"
             >
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors z-50 bg-white rounded-full p-1 shadow-md"
                 aria-label="Close"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
 
               {/* Printable content section */}
-              <div ref={printRef} className="space-y-4 p-4">
+              <div ref={printRef} className="space-y-3 p-3 mt-10">
                 {/* Logo and header */}
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-2">
                   <div className="text-center">
-                    <h1 className="text-xl font-bold text-primary flex items-center justify-center">
+                    <h1 className="text-lg font-bold text-primary flex items-center justify-center">
                       VIP Ride
                       <span className={`text-sm font-normal text-gray-500 ${rtl ? 'mr-1' : 'ml-1'}`}>
                         {t("general.istanbulAirport")}
@@ -194,24 +194,24 @@ export default function TransferBookingSuccessModal({
                 </div>
 
                 {/* Success message */}
-                <div className="text-center mb-4">
-                  <div className="flex justify-center mb-2">
-                    <CheckCircleIcon className="h-12 w-12 text-green-500" />
+                <div className="text-center mb-3">
+                  <div className="flex justify-center mb-1">
+                    <CheckCircleIcon className="h-10 w-10 text-green-500" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-800 mb-1">
+                  <h2 className="text-lg font-bold text-gray-800 mb-1">
                     {t("booking.bookingSuccess")}
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs">
                     {t("booking.confirmationEmail")}
                   </p>
                 </div>
 
                 {/* Booking details */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">
+                <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                  <h3 className="font-bold text-gray-800 mb-2 text-xs">
                     {t("booking.bookingReference")}: {bookingDetails.bookingId}
                   </h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <p className="text-gray-600">{t("booking.name")}:</p>
                       <p className="font-medium">{bookingDetails.customerName}</p>
@@ -250,9 +250,9 @@ export default function TransferBookingSuccessModal({
                 </div>
 
                 {/* Location details */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("transfer.bookingSummary")}:</h3>
-                  <div className="space-y-2 text-sm">
+                <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                  <h3 className="font-bold text-gray-800 mb-2 text-xs">{t("transfer.bookingSummary")}:</h3>
+                  <div className="space-y-2 text-xs">
                     <div>
                       <p className="text-gray-600">{t("transfer.fromLocation")}:</p>
                       <p className="font-medium">{bookingDetails.fromLocation}</p>
@@ -271,7 +271,7 @@ export default function TransferBookingSuccessModal({
                 </div>
 
                 {/* Contact information */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
+                <div className="bg-gray-50 p-3 rounded-lg mb-3 text-xs">
                   <p className="font-medium text-gray-800 mb-2">
                     {t("booking.contactInfo")}:
                   </p>
@@ -284,7 +284,7 @@ export default function TransferBookingSuccessModal({
                 </div>
 
                 {/* Thank you message */}
-                <div className="text-center text-gray-600 text-sm">
+                <div className="text-center text-gray-600 text-xs">
                   <p>{t("booking.thankYouMessage")}</p>
                 </div>
               </div>

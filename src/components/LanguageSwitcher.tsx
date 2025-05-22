@@ -31,7 +31,21 @@ export default function LanguageSwitcher({
   const rtl = isRTL(i18n.language);
 
   const changeLanguage = (lng: string) => {
+    // Get current path
+    const currentPath = window.location.pathname;
+    
+    // Remove any existing language prefix
+    const pathWithoutLang = currentPath.replace(/^\/(en|tr|ar)/, '');
+    
+    // If we're at the root, just add the language
+    const newPath = pathWithoutLang === '/' ? `/${lng}` : `/${lng}${pathWithoutLang}`;
+    
+    // Change the language
     i18n.changeLanguage(lng);
+    
+    // Navigate to the new URL
+    window.location.href = newPath;
+    
     onLanguageChange(); // Call the callback (to close menu in mobile view)
   };
 

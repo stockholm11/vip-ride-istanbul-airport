@@ -18,6 +18,7 @@ const dialogAnimation = {
 interface ChauffeurBookingConfirmationProps {
   isOpen: boolean;
   onClose: () => void;
+  submitted?: boolean;
   bookingDetails: {
     bookingId: string;
     customerName: string;
@@ -39,11 +40,10 @@ interface ChauffeurBookingConfirmationProps {
   };
 }
 
-export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingDetails }: ChauffeurBookingConfirmationProps) {
+export default function ChauffeurBookingConfirmation({ isOpen, onClose, submitted = false, bookingDetails }: ChauffeurBookingConfirmationProps) {
   const { t, i18n } = useTranslation();
   const printRef = useRef<HTMLDivElement>(null);
   const [emailStatus, setEmailStatus] = useState<'pending' | 'success' | 'error' | null>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   // Determine if current language is RTL
   const rtl = isRTL(i18n.language);
@@ -121,7 +121,6 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
 
   const handleEmailConfirmation = () => {
     setEmailStatus('pending');
-    setSubmitted(true);
     
     // Simulate email sending
     setTimeout(() => {
@@ -161,23 +160,25 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
               exit="exit"
               transition={true}
               dir={rtl ? 'rtl' : 'ltr'}
-              className="mx-auto max-w-3xl rounded-xl bg-white p-6 shadow-xl relative"
+              className="mx-auto max-w-xl w-full bg-white rounded-xl shadow-2xl overflow-hidden relative max-h-[90vh] overflow-y-auto"
             >
               {/* Close button */}
               <button
-                onClick={onClose}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-                aria-label="Close"
+                onClick={() => {
+                  onClose();
+                  setEmailStatus(null);
+                }}
+                className={`absolute top-2 ${rtl ? 'left-2' : 'right-2'} text-gray-400 hover:text-gray-600 transition-colors z-50 bg-white rounded-full p-1 shadow-md`}
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
 
               {/* Printable content section */}
-              <div ref={printRef} className="space-y-4 p-4">
+              <div ref={printRef} className="p-4 bg-white mt-10">
                 {/* Logo and header */}
                 <div className="flex justify-center mb-4">
                   <div className="text-center">
-                    <h1 className="text-xl font-bold text-primary flex items-center justify-center">
+                    <h1 className="text-lg font-bold text-primary flex items-center justify-center">
                       VIP Ride
                       <span className={`text-sm font-normal text-gray-500 ${rtl ? 'mr-1' : 'ml-1'}`}>
                         {t("general.istanbulAirport")}
@@ -189,65 +190,68 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 {/* Success message */}
                 <div className="text-center mb-4">
                   <div className="flex justify-center mb-2">
-                    <CheckCircleIcon className="h-12 w-12 text-green-500" />
+                    <CheckCircleIcon className="h-10 w-10 text-green-500" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-800 mb-1">
+                  <h2 className="text-lg font-bold text-gray-800 mb-1">
                     {t("booking.bookingSuccess")}
                   </h2>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs">
                     {t("booking.confirmationEmail")}
                   </p>
                 </div>
 
                 {/* Booking details */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">
-                    {t("booking.bookingReference")}: {bookingDetails.bookingId}
+                <div className="border border-gray-200 rounded-lg p-4 mb-4">
+                  <h3 className="text-base font-bold text-primary mb-3 pb-2 border-b">
+                    {t("booking.bookingDetails")}
                   </h3>
-                  <div className="space-y-4">
+
+                  <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-xs">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.serviceName")}:</span>
-                      <span className="font-medium">{bookingDetails.serviceName}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.serviceName")}:</dt>
+                      <dd className="font-medium">{bookingDetails.serviceName}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.date")}:</span>
-                      <span className="font-medium">{bookingDetails.date}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.date")}:</dt>
+                      <dd className="font-medium">{bookingDetails.date}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.time")}:</span>
-                      <span className="font-medium">{bookingDetails.time}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.time")}:</dt>
+                      <dd className="font-medium">{bookingDetails.time}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.duration")}:</span>
-                      <span className="font-medium">{bookingDetails.duration} {t("chauffeur.hours")}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.duration")}:</dt>
+                      <dd className="font-medium">{bookingDetails.duration} {t("chauffeur.hours")}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.passengers")}:</span>
-                      <span className="font-medium">{bookingDetails.passengers}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.passengers")}:</dt>
+                      <dd className="font-medium">{bookingDetails.passengers}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.pickupLocation")}:</span>
-                      <span className="font-medium">{bookingDetails.pickupLocation}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.pickupLocation")}:</dt>
+                      <dd className="font-medium">{bookingDetails.pickupLocation}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.dropoffLocation")}:</span>
-                      <span className="font-medium">{bookingDetails.dropoffLocation}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.dropoffLocation")}:</dt>
+                      <dd className="font-medium">{bookingDetails.dropoffLocation}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</span>
-                      <span className="font-medium">€{bookingDetails.totalPrice}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</dt>
+                      <dd className="font-medium">€{bookingDetails.totalPrice}</dd>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</span>
-                      <span className="font-medium">{t(`booking.${bookingDetails.paymentMethod}`)}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</dt>
+                      <dd className="font-medium">{t(`booking.${bookingDetails.paymentMethod}`)}</dd>
                     </div>
-                  </div>
+                  </dl>
                 </div>
 
                 {/* Location details */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("chauffeur.booking.details")}:</h3>
-                  <div className="space-y-2 text-sm">
+                <div className="border border-gray-200 rounded-lg p-4 mb-4">
+                  <h3 className="text-base font-bold text-primary mb-3 pb-2 border-b">
+                    {t("chauffeur.booking.details")}:
+                  </h3>
+                  <div className="space-y-2 text-xs">
                     {bookingDetails.specialRequests && (
                       <div>
                         <p className="text-gray-600">{t("chauffeur.booking.specialRequests")}:</p>
@@ -258,38 +262,40 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 </div>
 
                 {/* Payment Information */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-bold text-gray-800 mb-2 text-sm">{t("chauffeur.booking.paymentDetails")}:</h3>
-                  <div className="space-y-2 text-sm">
+                <div className="border border-gray-200 rounded-lg p-4 mb-4">
+                  <h3 className="text-base font-bold text-primary mb-3 pb-2 border-b">
+                    {t("chauffeur.booking.paymentDetails")}:
+                  </h3>
+                  <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</span>
-                      <span className="font-medium">
+                      <dt className="text-gray-600">{t("chauffeur.booking.paymentMethod")}:</dt>
+                      <dd className="font-medium">
                         {bookingDetails.paymentMethod === 'creditCard' ? t("chauffeur.booking.creditCard") : t("chauffeur.booking.cash")}
-                      </span>
+                      </dd>
                     </div>
                     {bookingDetails.paymentMethod === 'creditCard' && (
                       <>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t("chauffeur.booking.cardNumber")}:</span>
-                          <span className="font-medium">
+                          <dt className="text-gray-600">{t("chauffeur.booking.cardNumber")}:</dt>
+                          <dd className="font-medium">
                             {bookingDetails.cardNumber ? `**** **** **** ${bookingDetails.cardNumber.slice(-4)}` : ''}
-                          </span>
+                          </dd>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">{t("chauffeur.booking.cardholderName")}:</span>
-                          <span className="font-medium">{bookingDetails.cardHolderName}</span>
+                          <dt className="text-gray-600">{t("chauffeur.booking.cardholderName")}:</dt>
+                          <dd className="font-medium">{bookingDetails.cardHolderName}</dd>
                         </div>
                       </>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</span>
-                      <span className="font-medium">€{bookingDetails.totalPrice}</span>
+                      <dt className="text-gray-600">{t("chauffeur.booking.totalPrice")}:</dt>
+                      <dd className="font-medium">€{bookingDetails.totalPrice}</dd>
                     </div>
                   </div>
                 </div>
 
                 {/* Contact information */}
-                <div className="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
+                <div className="border border-gray-200 rounded-lg p-4 mb-4 text-xs">
                   <p className="font-medium text-gray-800 mb-2">
                     {t("chauffeur.booking.contactInfo")}:
                   </p>
@@ -302,7 +308,7 @@ export default function ChauffeurBookingConfirmation({ isOpen, onClose, bookingD
                 </div>
 
                 {/* Thank you message */}
-                <div className="text-center text-gray-600 text-sm">
+                <div className="text-center text-gray-600 text-xs">
                   <p>{t("chauffeur.booking.thankYouMessage")}</p>
                 </div>
               </div>

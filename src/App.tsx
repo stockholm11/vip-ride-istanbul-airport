@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { I18nextProvider } from "react-i18next";
+import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./utils/i18n";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
@@ -10,21 +10,31 @@ import PaymentPage from "./pages/PaymentPage";
 import ChauffeurPage from "./pages/ChauffeurPage";
 import ContactPage from "./pages/ContactPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import CancellationPolicy from "./pages/CancellationPolicy";
 
 function App() {
+  const { i18n: i18nInstance } = useTranslation();
+
   useEffect(() => {
     // Set initial language direction on mount
-    document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = i18n.language;
-  }, []);
+    document.documentElement.dir = i18nInstance.language === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = i18nInstance.language;
+  }, [i18nInstance.language]);
 
   return (
     <I18nextProvider i18n={i18n}>
       <Router>
         <Routes>
-          {/* Main Routes */}
+          {/* Redirect root to default language */}
+          <Route path="/" element={<Navigate to={`/${i18nInstance.language}`} replace />} />
+
+          {/* Language-specific routes */}
+          {['en', 'tr', 'ar'].map((lang) => (
+            <Route key={lang} path={`/${lang}`}>
           <Route
-            path="/"
+                index
             element={
               <MainLayout>
                 <HomePage />
@@ -32,7 +42,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours"
+                path="vip-tours"
             element={
               <MainLayout>
                 <VipToursPage />
@@ -40,7 +50,7 @@ function App() {
             }
           />
           <Route
-            path="/transfer"
+                path="transfer"
             element={
               <MainLayout>
                 <TransferPage />
@@ -48,7 +58,7 @@ function App() {
             }
           />
           <Route
-            path="/chauffeur"
+                path="chauffeur"
             element={
               <MainLayout>
                 <ChauffeurPage />
@@ -56,7 +66,7 @@ function App() {
             }
           />
           <Route
-            path="/contact"
+                path="contact"
             element={
               <MainLayout>
                 <ContactPage />
@@ -66,7 +76,7 @@ function App() {
 
           {/* VIP Tours Submenu Routes */}
           <Route
-            path="/vip-tours/cultural-historical"
+                path="vip-tours/cultural-historical"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="cultural-historical" />
@@ -74,7 +84,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours/shopping-entertainment"
+                path="vip-tours/shopping-entertainment"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="shopping-entertainment" />
@@ -82,7 +92,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours/nature-excursion"
+                path="vip-tours/nature-excursion"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="nature-excursion" />
@@ -90,7 +100,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours/yacht-boat"
+                path="vip-tours/yacht-boat"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="yacht-boat" />
@@ -98,7 +108,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours/medical"
+                path="vip-tours/medical"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="medical" />
@@ -106,7 +116,7 @@ function App() {
             }
           />
           <Route
-            path="/vip-tours/sports"
+                path="vip-tours/sports"
             element={
               <MainLayout>
                 <VipToursPage categoryFilter="sports" />
@@ -114,9 +124,35 @@ function App() {
             }
           />
 
+              {/* Policy Pages */}
+              <Route
+                path="privacy-policy"
+                element={
+                  <MainLayout>
+                    <PrivacyPolicy />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="terms-conditions"
+                element={
+                  <MainLayout>
+                    <TermsConditions />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="cancellation-policy"
+                element={
+                  <MainLayout>
+                    <CancellationPolicy />
+                  </MainLayout>
+                }
+              />
+
           {/* Transfer Submenu Routes */}
           <Route
-            path="/transfer/airport"
+                path="transfer/airport"
             element={
               <MainLayout>
                 <TransferPage initialTransferType="airport" />
@@ -124,7 +160,7 @@ function App() {
             }
           />
           <Route
-            path="/transfer/intercity"
+                path="transfer/intercity"
             element={
               <MainLayout>
                 <TransferPage initialTransferType="intercity" />
@@ -132,7 +168,7 @@ function App() {
             }
           />
           <Route
-            path="/transfer/city"
+                path="transfer/city"
             element={
               <MainLayout>
                 <TransferPage initialTransferType="city" />
@@ -140,33 +176,18 @@ function App() {
             }
           />
           <Route
-            path="/transfer/payment"
+                path="transfer/payment"
             element={
               <MainLayout>
                 <PaymentPage />
               </MainLayout>
             }
           />
+            </Route>
+          ))}
 
-          {/* Chauffeur Submenu Routes */}
-          <Route
-            path="/chauffeur"
-            element={
-              <MainLayout>
-                <ChauffeurPage />
-              </MainLayout>
-            }
-          />
-
-          {/* 404 Route */}
-          <Route
-            path="*"
-            element={
-              <MainLayout>
-                <NotFoundPage />
-              </MainLayout>
-            }
-          />
+          {/* Redirect any non-language-prefixed routes to default language */}
+          <Route path="/*" element={<Navigate to={`/${i18nInstance.language}/*`} replace />} />
         </Routes>
       </Router>
     </I18nextProvider>

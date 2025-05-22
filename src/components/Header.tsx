@@ -16,13 +16,23 @@ export default function Header() {
     setIsMenuOpen(false);
   }, [location]);
 
+  // Helper function to get localized path
+  const getLocalizedPath = (path: string) => {
+    // If the path already has a language prefix, return it as is
+    if (path.match(/^\/(en|tr|ar)\//)) {
+      return path;
+    }
+    // Otherwise, add the current language prefix
+    return `/${i18n.language}${path}`;
+  };
+
   return (
     <header className="bg-primary shadow-md">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center">
+            <Link to={getLocalizedPath('/')} className="flex items-center">
               <Logo />
             </Link>
             <a
@@ -37,11 +47,11 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className={`hidden md:flex items-center space-x-8 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-            <Link to="/" className="text-white hover:text-secondary transition-colors">{t("nav.home")}</Link>
-            <Link to="/vip-tours" className="text-white hover:text-secondary transition-colors">{t("nav.vipTours")}</Link>
-            <Link to="/transfer" className="text-white hover:text-secondary transition-colors">{t("nav.transfer")}</Link>
-            <Link to="/chauffeur" className="text-white hover:text-secondary transition-colors">{t("nav.chauffeur")}</Link>
-            <Link to="/contact" className="text-white hover:text-secondary transition-colors">{t("nav.contact")}</Link>
+            <Link to={getLocalizedPath('/')} className="text-white hover:text-secondary transition-colors">{t("nav.home")}</Link>
+            <Link to={getLocalizedPath('/vip-tours')} className="text-white hover:text-secondary transition-colors">{t("nav.vipTours")}</Link>
+            <Link to={getLocalizedPath('/transfer')} className="text-white hover:text-secondary transition-colors">{t("nav.transfer")}</Link>
+            <Link to={getLocalizedPath('/chauffeur')} className="text-white hover:text-secondary transition-colors">{t("nav.chauffeur")}</Link>
+            <Link to={getLocalizedPath('/contact')} className="text-white hover:text-secondary transition-colors">{t("nav.contact")}</Link>
             <LanguageSwitcher variant="minimal" />
           </nav>
 
@@ -62,11 +72,11 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden mt-4 bg-gray-900 rounded-lg p-4 shadow-xl">
             <nav className="flex flex-col space-y-2">
-              <Link to="/" className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.home")}</Link>
-              <Link to="/vip-tours" className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.vipTours")}</Link>
-              <Link to="/transfer" className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.transfer")}</Link>
-              <Link to="/chauffeur" className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.chauffeur")}</Link>
-              <Link to="/contact" className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.contact")}</Link>
+              <Link to={getLocalizedPath('/')} className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.home")}</Link>
+              <Link to={getLocalizedPath('/vip-tours')} className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.vipTours")}</Link>
+              <Link to={getLocalizedPath('/transfer')} className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.transfer")}</Link>
+              <Link to={getLocalizedPath('/chauffeur')} className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.chauffeur")}</Link>
+              <Link to={getLocalizedPath('/contact')} className="text-white hover:text-secondary transition-colors py-2 border-b border-gray-700">{t("nav.contact")}</Link>
               <LanguageSwitcher isMobile={true} onLanguageChange={() => setIsMenuOpen(false)} />
             </nav>
           </div>

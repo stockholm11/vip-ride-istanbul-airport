@@ -147,6 +147,15 @@ export default function TransferBookingForm({ onSearch, initialTransferType = 'a
             alert(t('booking.invalidDateTime'));
             return;
           }
+
+          // Check if return date is after departure date
+          const departureDateTime = new Date(`${formData.date}T${formData.time}`);
+          const returnDateTime = new Date(`${newReturnDate}T${newReturnTime}`);
+          
+          if (returnDateTime <= departureDateTime) {
+            alert(t('booking.returnDateAfterDeparture'));
+            return;
+          }
         }
       }
     }

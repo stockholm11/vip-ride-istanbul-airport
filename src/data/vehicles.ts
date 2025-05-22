@@ -20,7 +20,6 @@ export interface Vehicle {
   features: string[];
   category: 'sedan' | 'minivan' | 'minibus';
   type: 'premium' | 'vip' | 'luxury';
-  available: boolean;
   availableForTransfer: boolean;
   availableForChauffeur: boolean;
 }
@@ -46,8 +45,7 @@ const vehicles: Vehicle[] = [
       "Bottled water",
     ],
     category: "minivan",
-    type: "vip", // Changed from "premium" to "vip"
-    available: true,
+    type: "vip",
     availableForTransfer: true,
     availableForChauffeur: true
   },
@@ -73,7 +71,6 @@ const vehicles: Vehicle[] = [
     ],
     category: "sedan",
     type: "luxury",
-    available: true,
     availableForTransfer: true,
     availableForChauffeur: true
   },
@@ -98,7 +95,6 @@ const vehicles: Vehicle[] = [
     ],
     category: "minivan",
     type: "vip",
-    available: true,
     availableForTransfer: true,
     availableForChauffeur: true
   },
@@ -123,7 +119,6 @@ const vehicles: Vehicle[] = [
     ],
     category: "minibus",
     type: "premium",
-    available: true,
     availableForTransfer: true,
     availableForChauffeur: true
   },
@@ -150,7 +145,6 @@ const vehicles: Vehicle[] = [
     ],
     category: "minibus",
     type: "luxury",
-    available: true,
     availableForTransfer: true,
     availableForChauffeur: true
   }
@@ -160,15 +154,15 @@ export default vehicles;
 
 // Helper functions to work with vehicles
 export const getAvailableVehicles = (): Vehicle[] => {
-  return vehicles.filter(vehicle => vehicle.available);
+  return vehicles;
 };
 
 export const getVehiclesForTransfer = (): Vehicle[] => {
-  return vehicles.filter(vehicle => vehicle.availableForTransfer && vehicle.available);
+  return vehicles.filter(vehicle => vehicle.availableForTransfer);
 };
 
 export const getVehiclesForChauffeur = (): Vehicle[] => {
-  return vehicles.filter(vehicle => vehicle.availableForChauffeur && vehicle.available);
+  return vehicles.filter(vehicle => vehicle.availableForChauffeur);
 };
 
 export const getVehicleById = (id: string): Vehicle | undefined => {
@@ -184,8 +178,7 @@ export const filterVehiclesByCapacity = (
   return vehicles.filter(vehicle => {
     // Check if vehicle meets capacity requirements
     const meetsCapacityRequirements = vehicle.passengerCapacity >= minPassengers &&
-                                      vehicle.luggageCapacity >= minLuggage &&
-                                      vehicle.available;
+                                      vehicle.luggageCapacity >= minLuggage;
 
     // Check service type requirements
     if (forService === 'transfer') {

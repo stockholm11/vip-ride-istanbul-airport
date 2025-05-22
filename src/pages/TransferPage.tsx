@@ -316,7 +316,7 @@ export default function TransferPage({ initialTransferType }: { initialTransferT
               </p>
               {locations?.distance && (
                 <p className="mt-2 text-gray-600">
-                  {t('transfer.actualDistance')}: {locations.distance} km
+                  {t('transfer.estimatedDistance')}: {locations.distance} km
                 </p>
               )}
               {locations?.travelTime && (
