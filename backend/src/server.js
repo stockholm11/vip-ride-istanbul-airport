@@ -4,9 +4,16 @@ const Iyzipay = require('iyzipay');
 require('dotenv').config();
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const { testConnection } = require('./config/database');
+const Reservation = require('./models/Reservation');
 
 const app = express();
 app.use(bodyParser.json());
+
+// Test database connection on startup
+testConnection()
+  .then(() => console.log('Database connection successful'))
+  .catch(err => console.error('Database connection failed:', err));
 
 app.use(cors({
     origin: true, // Tüm originlere izin ver
@@ -101,71 +108,58 @@ const sendBookingConfirmationEmail = async (bookingDetails) => {
 app.post('/api/payment', async (req, res) => {
     const { price, paidPrice, currency, basketId, paymentCard, buyer, shippingAddress, billingAddress, basketItems, bookingDetails } = req.body;
     
-    console.log('=== Ödeme İsteği Başladı ===');
-    console.log('İstek body:', JSON.stringify(req.body, null, 2));
-    console.log('Rezervasyon detayları:', JSON.stringify(bookingDetails, null, 2));
+    // Servis tipi belirleme
+    let serviceType = 'TRANSFER';
+    if (bookingDetails.bookingReference) {
+        if (bookingDetails.bookingReference.startsWith('TOUR-')) {
+            serviceType = 'TOUR';
+        } else if (bookingDetails.bookingReference.startsWith('TRF-')) {
+            serviceType = 'TRANSFER';
+        } else if (bookingDetails.bookingReference.startsWith('CHF-')) {
+            serviceType = 'CHAUFFEUR';
+        }
+    }
 
-    // iyzico instance kontrolü
-    console.log('iyzico instance:', {
-        apiKey: process.env.IYZI_API_KEY ? 'API Key mevcut' : 'API Key eksik',
-        secretKey: process.env.IYZI_SECRET_KEY ? 'Secret Key mevcut' : 'Secret Key eksik',
-        baseUrl: process.env.IYZI_BASE_URL
-    });
+    // Araç tipi belirleme
+    let vehicleType = '';
+    if (bookingDetails.serviceName) {
+        vehicleType = bookingDetails.serviceName;
+    } else {
+        vehicleType = 'Mercedes-Benz Vito Tourer';
+    }
 
-    const request = {
-        locale: Iyzipay.LOCALE.TR,
-        conversationId: `CONV-${Date.now()}`,
-        price: price,
-        paidPrice: paidPrice,
-        currency: currency,
-        installment: '1',
-        basketId: basketId,
-        paymentChannel: Iyzipay.PAYMENT_CHANNEL.WEB,
-        paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-        paymentCard: paymentCard,
-        buyer: buyer,
-        shippingAddress: shippingAddress,
-        billingAddress: billingAddress,
-        basketItems: basketItems,
+    // Telefon numarası belirleme
+    const customerPhone = (buyer?.gsmNumber || '').toString().trim();
+
+    // Rezervasyon verisi
+    const reservationData = {
+        customer_name: `${bookingDetails.firstName || ''} ${bookingDetails.lastName || ''}`.trim(),
+        customer_email: bookingDetails.email || '',
+        customer_phone: customerPhone,
+        pickup_location: bookingDetails.pickupLocation || '',
+        dropoff_location: bookingDetails.dropoffLocation || '',
+        pickup_date: bookingDetails.date || '',
+        pickup_time: bookingDetails.time || '',
+        vehicle_type: vehicleType,
+        service_type: serviceType,
+        passengers: bookingDetails.passengers || 1,
+        special_requests: bookingDetails.specialRequests || '',
+        status: 'CONFIRMED'
     };
 
-    console.log('iyzico isteği:', JSON.stringify(request, null, 2));
-
     try {
-        const result = await new Promise((resolve, reject) => {
-            iyzipayInstance.payment.create(request, (err, result) => {
-                if (err) {
-                    console.error('iyzico hata:', JSON.stringify(err, null, 2));
-                    reject(err);
-                } else {
-                    console.log('iyzico yanıt:', JSON.stringify(result, null, 2));
-                    resolve(result);
-                }
-            });
-        });
-
-        console.log('Ödeme sonucu:', JSON.stringify(result, null, 2));
-
-        if (result.status === 'success') {
-            console.log('Ödeme başarılı, e-posta gönderiliyor...');
-            const emailSent = await sendBookingConfirmationEmail(bookingDetails);
-            if (!emailSent) {
-                console.error('E-posta gönderilemedi');
-            } else {
-                console.log('E-posta başarıyla gönderildi');
-            }
-        } else {
-            console.error('Ödeme başarısız:', result.errorMessage);
+        const reservationId = await Reservation.create(reservationData);
+        console.log('Rezervasyon başarıyla kaydedildi. ID:', reservationId);
+        
+        // E-posta gönder
+        const emailSent = await sendBookingConfirmationEmail(bookingDetails);
+        if (!emailSent) {
+            console.error('E-posta gönderilemedi');
         }
-
-        res.status(200).json(result);
-    } catch (error) {
-        console.error('Ödeme işlemi hatası:', error);
-        res.status(500).json({ 
-            error: error.message || 'Ödeme işlemi başarısız oldu',
-            details: error
-        });
+    } catch (dbError) {
+        console.error('Rezervasyon kaydedilirken hata:', dbError);
     }
+    res.status(200).json({ status: 'success' });
 });
 
 // E-posta gönderme endpoint'i
