@@ -429,9 +429,15 @@ export default function FeaturedTransfers() {
     }).format(price);
   };
 
+  // Helper function to add language prefix
+  const getLocalizedPath = (path: string) => {
+    if (path.match(/^\/(en|tr|ar)\//)) return path;
+    return `/${i18n.language}${path}`;
+  };
+
   // Generate pre-populated transfer link
   const generateTransferLink = (route: FeaturedRoute) => {
-    return `/transfer?from=${route.fromLocationId}&to=${route.toLocationId}&type=${route.transferType}`;
+    return getLocalizedPath(`/transfer?from=${route.fromLocationId}&to=${route.toLocationId}&type=${route.transferType}`);
   };
 
   // Handle quick booking submission
@@ -527,7 +533,7 @@ export default function FeaturedTransfers() {
       params.append('returnTime', returnTime);
     }
 
-    window.location.href = `/transfer?${params.toString()}`;
+    window.location.href = getLocalizedPath(`/transfer?${params.toString()}`);
   };
 
   // Helper function to get location name

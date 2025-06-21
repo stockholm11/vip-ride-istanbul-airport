@@ -30,6 +30,12 @@ function App() {
           {/* Redirect root to default language */}
           <Route path="/" element={<Navigate to={`/${i18nInstance.language}`} replace />} />
 
+          {/* Redirect non-prefixed main routes to language-prefixed versions */}
+          <Route path="/transfer" element={<Navigate to={`/${i18nInstance.language}/transfer`} replace />} />
+          <Route path="/contact" element={<Navigate to={`/${i18nInstance.language}/contact`} replace />} />
+          <Route path="/vip-tours" element={<Navigate to={`/${i18nInstance.language}/vip-tours`} replace />} />
+          <Route path="/chauffeur" element={<Navigate to={`/${i18nInstance.language}/chauffeur`} replace />} />
+
           {/* Language-specific routes */}
           {['en', 'tr', 'ar'].map((lang) => (
             <Route key={lang} path={`/${lang}`}>
@@ -187,7 +193,7 @@ function App() {
           ))}
 
           {/* Redirect any non-language-prefixed routes to default language */}
-          <Route path="/*" element={<Navigate to={`/${i18nInstance.language}/*`} replace />} />
+          <Route path="/*" element={<Navigate to={`/${i18nInstance.language}`} replace />} />
         </Routes>
       </Router>
     </I18nextProvider>

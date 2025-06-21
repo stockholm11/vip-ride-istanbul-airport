@@ -4,7 +4,13 @@ import { PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import exteriorImage from "../assets/images/vehicles/mercedes-s-class.jpg";
 
 export default function CallToAction() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Helper function to add language prefix
+  const getLocalizedPath = (path: string) => {
+    if (path.match(/^\/(en|tr|ar)\//)) return path;
+    return `/${i18n.language}${path}`;
+  };
 
   return (
     <section
@@ -45,7 +51,7 @@ export default function CallToAction() {
               <span>+90 543 156 8648</span>
             </a>
             <Link
-              to="/contact"
+              to={getLocalizedPath("/contact")}
               className="bg-white text-primary px-6 py-4 flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors"
             >
               <EnvelopeIcon className="h-5 w-5" />

@@ -2,7 +2,13 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 export default function NotFoundPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Helper function to add language prefix
+  const getLocalizedPath = (path: string) => {
+    if (path.match(/^\/(en|tr|ar)\//)) return path;
+    return `/${i18n.language}${path}`;
+  };
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center">
@@ -16,7 +22,7 @@ export default function NotFoundPage() {
           unavailable.
         </p>
         <Link
-          to="/"
+          to={getLocalizedPath("/")}
           className="btn-gold inline-block px-8 py-3 font-semibold transition-all hover:scale-105"
         >
           {t('nav.home')}

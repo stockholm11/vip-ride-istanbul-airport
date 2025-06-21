@@ -192,6 +192,12 @@ export default function FeaturedTours() {
     setIsBookingModalOpen(true);
   };
 
+  // Helper function to add language prefix
+  const getLocalizedPath = (path: string) => {
+    if (path.match(/^\/(en|tr|ar)\//)) return path;
+    return `/${i18n.language}${path}`;
+  };
+
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
@@ -338,7 +344,7 @@ export default function FeaturedTours() {
 
         <div className="mt-12 text-center">
           <Link
-            to="/vip-tours"
+            to={getLocalizedPath("/vip-tours")}
             className="inline-flex items-center px-6 py-3 border border-secondary text-secondary font-medium rounded-md hover:bg-secondary hover:text-white transition-colors"
           >
             {t("featuredTours.viewAll")}

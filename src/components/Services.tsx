@@ -10,27 +10,33 @@ import {
 export default function Services() {
   const { t, i18n } = useTranslation();
 
+  // Helper function to add language prefix
+  const getLocalizedPath = (path: string) => {
+    if (path.match(/^\/(en|tr|ar)\//)) return path;
+    return `/${i18n.language}${path}`;
+  };
+
   const services = [
     {
       id: "vip-tours",
       title: "services.vipTours",
       description: "services.vipToursDesc",
       icon: <GlobeAltIcon className="h-12 w-12" />,
-      url: `/${i18n.language}/vip-tours`,
+      url: getLocalizedPath("/vip-tours"),
     },
     {
       id: "airport-transfer",
       title: "services.airportTransfer",
       description: "services.airportTransferDesc",
       icon: <TruckIcon className="h-12 w-12" />,
-      url: `/${i18n.language}/transfer`,
+      url: getLocalizedPath("/transfer"),
     },
     {
       id: "chauffeur",
       title: "services.chauffeur",
       description: "services.chauffeurDesc",
       icon: <UserGroupIcon className="h-12 w-12" />,
-      url: `/${i18n.language}/chauffeur`,
+      url: getLocalizedPath("/chauffeur"),
     },
   ];
 
